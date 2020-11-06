@@ -20,16 +20,16 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module encoder_k3(unencoded_bits, clk, rst, choose_constraint_length, output1, output2);
+module encoder_k3(unencoded_bits, clk, rst, choose_constraint_length, out);
 
     input unencoded_bits, clk, rst, choose_constraint_length;
-    output reg output1, output2;
+    output reg [1:0] out;
     
-    reg [1:0] shift_reg; //register
+    reg [1:0] shift_reg = 0; //register
     
     always @(posedge clk) begin
-        output1 <= (unencoded_bits^shift_reg[1])^shift_reg[0];
-        output2 <= unencoded_bits^shift_reg[0];
+        out[1] <= (unencoded_bits^shift_reg[1])^shift_reg[0];
+        out[0] <= unencoded_bits^shift_reg[0];
         shift_reg = shift_reg>>1;
         shift_reg[1] = unencoded_bits;
     end
