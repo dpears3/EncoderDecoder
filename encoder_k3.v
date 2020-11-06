@@ -22,7 +22,8 @@
 
 module encoder_k3(unencoded_bits, clk, rst, choose_constraint_length, out);
 
-    input unencoded_bits, clk, rst, choose_constraint_length;
+    input unencoded_bits, clk, rst;
+    input [2:0] choose_constraint_length;
     output reg [1:0] out;
     
     reg [1:0] shift_reg = 0; //register
