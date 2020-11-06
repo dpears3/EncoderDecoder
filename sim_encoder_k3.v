@@ -38,12 +38,6 @@ module sim_encoder_k3();
     
         // Loading values into inputs, need to load 0's in register to see output
         clk = 0;
-        unencoded_bits = 1'b0;
-        #2
-        unencoded_bits = 1'b0;
-        #2
-        unencoded_bits = 1'b0;
-        #2
         unencoded_bits = 1'b1;
         #2
         unencoded_bits = 1'b1;
