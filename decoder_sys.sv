@@ -35,9 +35,28 @@ module decoder_sys(encoded_bits, choose_constraint_length, clk);
     // INITIAL STATE MEMORY
     
     // Trellis MEMORY
-    reg [4:0] trellis_path_metric [0:14][0:7];  // 2D array 5 bit data, rows = 15, col = 8
-    reg [1:0] trellis_branch_metric [0:14][0:7]; // 2D array 2 bit data, rows = 15, col = 8
-    
+    reg [4:0] trellis_path_metric [0:7][0:14];  // 2D array 5 bit data, rows = 8, col = 15
+    reg [1:0] trellis_branch_metric [0:7][0:14]; // 2D array 2 bit data, rows = 8, col = 15
+
+    //Branch Metrics
+    reg [4:0] s0_branch_0 [0:14];
+    reg [4:0] s0_branch_1 [0:14];
+    reg [4:0] s1_branch_0 [0:14];
+    reg [4:0] s1_branch_1 [0:14];
+    reg [4:0] s2_branch_0 [0:14];
+    reg [4:0] s2_branch_1 [0:14];
+    reg [4:0] s3_branch_0 [0:14];
+    reg [4:0] s3_branch_1 [0:14];
+
+    //Path Metrics
+    reg [4:0] s0_path_0 [0:14];
+    reg [4:0] s0_path_1 [0:14];
+    reg [4:0] s1_path_0 [0:14];
+    reg [4:0] s1_path_1 [0:14];
+    reg [4:0] s2_path_0 [0:14];
+    reg [4:0] s2_path_1 [0:14];
+    reg [4:0] s3_path_0 [0:14];
+    reg [4:0] s3_path_1 [0:14];
     
     // Trellis optimum Branches
     reg [1:0] branches [0:7]; 
