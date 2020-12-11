@@ -142,11 +142,15 @@ module decoder_sys(encoded_bits, choose_constraint_length, clk);
                 trellis_path_metric[symbol_num % 15][1] = trellis_path_metric[(symbol_num - 1) % 15][4] + branches[1];
             end
             // Min(Path[0], Path[4]
+            //Branch metric
             if (trellis_branch_metric[(symbol_num - 1) % 15][0] < trellis_branch_metric[(symbol_num - 1) % 15][4])  begin
                 trellis_branch_metric[symbol_num % 15][0] = trellis_branch_metric[(symbol_num - 1) % 15][0] + branches[0];
                 trellis_branch_metric[symbol_num % 15][1] = trellis_branch_metric[(symbol_num - 1) % 15][0] + branches[1];
             end
             else begin
+                trellis_branch_metric[symbol_num % 15][0] = trellis_branch_metric[(symbol_num - 1) % 15][4] + branches[0];
+                trellis_path_metric[symbol_num % 15][1] = trellis_path_metric[(symbol_num - 1) % 15][4] + branches[1];	                
+                trellis_branch_metric[symbol_num % 15][1] = trellis_branch_metric[(symbol_num - 1) % 15][4] + branches[1];
                 
             end
   /*          
