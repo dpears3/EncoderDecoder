@@ -67,14 +67,55 @@ module decoder_sys(encoded_bits, choose_constraint_length, clk);
                                // input/output 0/00,  1/11,  0/10,  1/01,  0/11,  1/00, 0/01,   1/10
     
     always @(posedge clk) begin
-    
+    //s0 = 00 , s1 = 10, s2 =01, s3 11
         // Initializing
-        if (symbol_num <= 2) begin
-        
+        if (symbol_num < 2) begin
+            if(symbol_num == 0) begin
+                integer s1_count = 0, s0_count = 0;
+                if (encoded_bits[1] == 1) begin
+                    s0_count = s0_count +1;
+                end
+                else begin//encoded_bits[1] == 0
+                    s1_count = s1_count +1;
+                end
+                if (encoded_bits[0] == 1) begin
+                    s0_count = s0_count +1;
+                end
+                else begin//encoded_bits[0] == 0
+                    s1_count = s1_count +1;
+                end
+                
+                s1_branch_1[0] = s1_count;
+                s0_branch_0[0] = s0_count;
+            end
+            if(symbol_num == 1) begin
+                integer s1_count = 0, s0_count = 0, s2_count = 0, s3_count = 0;
+                if (encoded_bits[1] == 1) begin
+                    s0_count = s0_count +1;
+                    s3_count = s3_count +1;
+                end
+                else begin//encoded_bits[1] == 0
+                    s1_count = s1_count +1;
+                    s2_count = s2_count +1;
+                end
+                if (encoded_bits[0] == 1) begin
+                    s0_count = s0_count +1;
+                     s2_count = s2_count +1;
+                    
+                end
+                else begin//encoded_bits[0] == 0
+                    s1_count = s1_count +1;
+                    s3_count = s3_count +1;
+                end
+                s0_branch_0[1] = s0_count;
+                s1_branch_1[1] = s1_count;
+                s2_branch_0[1] = s2_count;
+                s3_branch_1[1] = s3_count;
+            end
         end
     
         // Trellis code
-        if (symbol_num > 2) begin
+        if (symbol_num >=2 and symbol_num <15) begin
         
             // Calculate the hamming distance for each branch
             for (i = 0; i < 8; i = i + 1) begin
@@ -101,14 +142,12 @@ module decoder_sys(encoded_bits, choose_constraint_length, clk);
                 trellis_path_metric[symbol_num % 15][1] = trellis_path_metric[(symbol_num - 1) % 15][4] + branches[1];
             end
             // Min(Path[0], Path[4]
-            // Branch metric
             if (trellis_branch_metric[(symbol_num - 1) % 15][0] < trellis_branch_metric[(symbol_num - 1) % 15][4])  begin
                 trellis_branch_metric[symbol_num % 15][0] = trellis_branch_metric[(symbol_num - 1) % 15][0] + branches[0];
                 trellis_branch_metric[symbol_num % 15][1] = trellis_branch_metric[(symbol_num - 1) % 15][0] + branches[1];
             end
             else begin
-                trellis_branch_metric[symbol_num % 15][0] = trellis_branch_metric[(symbol_num - 1) % 15][4] + branches[0];
-                trellis_branch_metric[symbol_num % 15][1] = trellis_branch_metric[(symbol_num - 1) % 15][4] + branches[1];
+                
             end
   /*          
             for (state_num = 0; state_num < 4; state_num = state_num + 1) begin
@@ -123,7 +162,10 @@ module decoder_sys(encoded_bits, choose_constraint_length, clk);
         end
     
         // Picking an output
-        if (symbol_num > 14) begin
+        if (symbol_num >=15) begin
+            //shift over
+            //insert new data
+            //ouput the decoded bit
             //end_index = symbol_num % 15;
             
         end
