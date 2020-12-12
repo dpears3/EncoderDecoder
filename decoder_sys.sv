@@ -26,6 +26,8 @@ module decoder_sys(encoded_bits, choose_constraint_length, clk);
     input [1:0] encoded_bits;               // 2 Bits received 
     input [2:0] choose_constraint_length;   // Values 3 - 6, assumed here as 3
     
+    output [16:0] final_output //Final output
+    
     // Counting Variables
     integer symbol_num = 0;
     integer state_num = 0;
@@ -170,6 +172,10 @@ module decoder_sys(encoded_bits, choose_constraint_length, clk);
             //shift over
             //insert new data
             //ouput the decoded bit
+            for (i = 0; i < 8; i++) begin
+                // Find optimum branches and store
+                trellis_branch_metrics[]
+            end
             //end_index = symbol_num % 15;
             
         end
