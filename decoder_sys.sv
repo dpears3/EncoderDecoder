@@ -87,7 +87,7 @@ module decoder_sys(encoded_bits, choose_constraint_length, clk);
     
     // Trellis optimum Branches
     reg [1:0] branches [0:7]; 
-    
+    //State1 = 
     
     reg [1:0] given_input_next_output [0:7] = {2'b00, 2'b11, 2'b11, 2'b00, 2'b10, 2'b01, 2'b01, 2'b10};
                                // States:      0 (00)        1 (01)        2 (10)        3 (11)
@@ -195,13 +195,16 @@ module decoder_sys(encoded_bits, choose_constraint_length, clk);
     
         // Picking an output
         if (symbol_num >=15) begin
-            //shift over
-            //insert new data
             //ouput the decoded bit
             for (i = 0; i < 8; i++) begin
                 // Find optimum branches and store
                 trellis_branch_metrics[]
             end
+            
+            //shift over
+            
+            //insert new data
+            
             //end_index = symbol_num % 15;
             
         end
