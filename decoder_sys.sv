@@ -12,32 +12,7 @@
 // Description: 
 // 
 // Dependencies: 
-// aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-
-
-
-
-
-
-
-
-
-
-fasdfsadasda
-
-sadasdasdas
-dsdfasfsa
-
-
-
-
-
-
-
-
-
-
-adfsadasdasdadadsds
+// 
 // Revision:
 // Revision 0.01 - File Created
 // Additional Comments:
@@ -51,7 +26,7 @@ module decoder_sys(encoded_bits, choose_constraint_length, clk);
     input [1:0] encoded_bits;               // 2 Bits received 
     input [2:0] choose_constraint_length;   // Values 3 - 6, assumed here as 3
     
-    output [16:0] final_output //Final output
+    output [15:0] final_output //Final output
     
     // Counting Variables
     integer symbol_num = 0;
@@ -94,10 +69,12 @@ module decoder_sys(encoded_bits, choose_constraint_length, clk);
     // Trellis optimum Branches
     reg [1:0] branches [0:7]; 
     
+    // Branch 1 or 0 was the min? Useful for traceback
+    //reg best_path [0:14];
     
-    reg [1:0] given_input_next_output [0:7] = {2'b00, 2'b11, 2'b11, 2'b00, 2'b10, 2'b01, 2'b01, 2'b10};
-                               // States:      0 (00)        1 (01)        2 (10)        3 (11)
-                               // input/output 0/00,  1/11,  0/10,  1/01,  0/11,  1/00, 0/01,   1/10
+    reg [1:0] given_input_next_output [0:7] = {2'b00, 2'b11, 2'b10, 2'b01, 2'b11, 2'b00, 2'b01, 2'b10};
+                               // States:      0 (00)        1 (10)        2 (01)        3 (11)
+                               // input/output 0/00,  1/11,  0/10,  1/01,  0/11,  1/00,  0/01,  1/10
     
     always @(posedge clk) begin
     //s0 = 00 , s1 = 10, s2 =01, s3 11
@@ -168,24 +145,28 @@ module decoder_sys(encoded_bits, choose_constraint_length, clk);
             if (trellis_path_metric[(symbol_num - 1) % 15][0] < trellis_path_metric[(symbol_num - 1) % 15][4])  begin
                 trellis_path_metric[symbol_num % 15][0] = trellis_path_metric[(symbol_num - 1) % 15][0] + branches[0];
                 trellis_path_metric[symbol_num % 15][1] = trellis_path_metric[(symbol_num - 1) % 15][0] + branches[1];
+                //best_path[symbol_num % 15] = 1'b0;
             end
             
             // i=0,1: S2 -> S0 better than S0 -> S0
             else begin
                 trellis_path_metric[symbol_num % 15][0] = trellis_path_metric[(symbol_num - 1) % 15][4] + branches[0];
                 trellis_path_metric[symbol_num % 15][1] = trellis_path_metric[(symbol_num - 1) % 15][4] + branches[1];
+                //best_path[symbol_num % 15] = 1'b1;
             end
             
             // i=2,3: S0 -> S1 better than S2 -> S1
             if (trellis_path_metric[(symbol_num - 1) % 15][1] < trellis_path_metric[(symbol_num - 1) % 15][5])  begin
                 trellis_path_metric[symbol_num % 15][2] = trellis_path_metric[(symbol_num - 1) % 15][1] + branches[2];
                 trellis_path_metric[symbol_num % 15][3] = trellis_path_metric[(symbol_num - 1) % 15][1] + branches[3];
+                //best_path = 1'b0;
             end
             
             // i=2,3: S2 -> S1 better than S0 -> S1
             else begin
                 trellis_path_metric[symbol_num % 15][2] = trellis_path_metric[(symbol_num - 1) % 15][5] + branches[2];
                 trellis_path_metric[symbol_num % 15][3] = trellis_path_metric[(symbol_num - 1) % 15][5] + branches[3];
+                best_path = 1'b0;
             end      
 
              // i=4,5: S1 -> S2 better than S3 -> S2
@@ -216,8 +197,12 @@ module decoder_sys(encoded_bits, choose_constraint_length, clk);
     
         // Picking an output
         if (symbol_num >=15) begin
+            //ouput the decoded bit
+            final_output <= branches[];
             //shift over
+            
             //insert new data
+
             //ouput the decoded bit
             
             //Iterate through entire tellis_branch_metric
@@ -237,7 +222,10 @@ module decoder_sys(encoded_bits, choose_constraint_length, clk);
                 end
             end
             //end_index = symbol_num % 15;
+
             
+            //end_index = symbol_num % 15;
+            symbol_num = symbol_num % 15;
         end
         symbol_num++;
         
