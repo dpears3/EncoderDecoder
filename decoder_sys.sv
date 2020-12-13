@@ -206,21 +206,22 @@ module decoder_sys(encoded_bits, choose_constraint_length, clk);
             //ouput the decoded bit
             
             //Iterate through entire tellis_branch_metric
-            for (i = 0; i < 8; i++) begin
+            //for (i = 0; i < 8; i++) begin
                 //Sum Hamming distance for all of the tellis_branch_metric and see which one is the smallest
-                temp_sum_Hamming = 0;
+            //    temp_sum_Hamming = 0;
                 
-                for (j = 0; j < 15; j++) begin
+            //    for (j = 0; j < 15; j++) begin
                     // Find optimum branches and store
-                    temp_sum_Hamming = temp_sum_Hamming + trellis_branch_metric[i][j];
-                end
+            //        temp_sum_Hamming = temp_sum_Hamming + trellis_branch_metric[i][j];
+            //    end
                 
                 //If you find the branches with smaller hamming distance, save that and update sum_Hamming
-                if (temp_sum_Hamming < sum_Hamming) begin
-                    sum_Hamming = temp_sum_Hamming;
-                    temp_index = i;
-                end
-            end
+            //    if (temp_sum_Hamming < sum_Hamming) begin
+            //        sum_Hamming = temp_sum_Hamming;
+            //        temp_index = i;
+            //    end
+            //end
+            
             //end_index = symbol_num % 15;
 
             
