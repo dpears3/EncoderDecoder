@@ -71,7 +71,7 @@ module decoder_sys(encoded_bits, choose_constraint_length, clk);
     always @(posedge clk) begin
     //s0 = 00 , s1 = 10, s2 =01, s3 11
         // Initializing
-        if (symbol_num < 2) begin
+        //if (symbol_num < 2) begin
             if(symbol_num == 0) begin
                 integer s1_count = 0, s0_count = 0;
                 if (encoded_bits[1] == 1) begin
@@ -114,7 +114,7 @@ module decoder_sys(encoded_bits, choose_constraint_length, clk);
                 s2_branch_0[1] = s2_count;
                 s3_branch_1[1] = s3_count;
             end
-        end
+        //end
     
         // Trellis code
         if (symbol_num >=2 and symbol_num <15) begin
