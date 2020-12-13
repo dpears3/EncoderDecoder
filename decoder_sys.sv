@@ -64,9 +64,9 @@ module decoder_sys(encoded_bits, choose_constraint_length, clk);
     reg [1:0] branches [0:7]; 
     //State1 = 
     
-    reg [1:0] given_input_next_output [0:7] = {2'b00, 2'b11, 2'b11, 2'b00, 2'b10, 2'b01, 2'b01, 2'b10};
-                               // States:      0 (00)        1 (01)        2 (10)        3 (11)
-                               // input/output 0/00,  1/11,  0/10,  1/01,  0/11,  1/00, 0/01,   1/10
+    reg [1:0] given_input_next_output [0:7] = {2'b00, 2'b11, 2'b10, 2'b01, 2'b11, 2'b00, 2'b01, 2'b10};
+                               // States:      0 (00)        1 (10)        2 (01)        3 (11)
+                               // input/output 0/00,  1/11,  0/10,  1/01,  0/11,  1/00,  0/01,  1/10
     
     always @(posedge clk) begin
     //s0 = 00 , s1 = 10, s2 =01, s3 11
