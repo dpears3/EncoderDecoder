@@ -237,7 +237,7 @@ module decoder_sys(encoded_bits, choose_constraint_length, clk);
                 end
             end
             //end_index = symbol_num % 15;
-            
+            //.
         end
         symbol_num++;
         
