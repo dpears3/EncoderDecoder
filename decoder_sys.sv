@@ -196,13 +196,13 @@ module decoder_sys(encoded_bits, choose_constraint_length, clk);
         // Picking an output
         if (symbol_num >=15) begin
             //ouput the decoded bit
-            = branches[]
+            final_output <= branches[];
             //shift over
             
             //insert new data
             
             //end_index = symbol_num % 15;
-            
+            symbol_num = symbol_num % 15;
         end
         symbol_num++;
         
