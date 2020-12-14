@@ -37,6 +37,22 @@ module testbench_capstone;
         encoded_bits = 2'b10;
         #5;
         encoded_bits = 2'b11;
+        #5;
+        encoded_bits = 2'b11;
+        #5;
+        encoded_bits = 2'b11;
+        #5;
+        encoded_bits = 2'b10;
+        #5;
+        encoded_bits = 2'b01;
+        #5;
+        encoded_bits = 2'b10;
+        #5;
+        encoded_bits = 2'b10;
+        #5;
+        encoded_bits = 2'b11;
+        #5;
+        encoded_bits = 2'b00;
         
     end
 endmodule
