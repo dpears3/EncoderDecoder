@@ -1,0 +1,36 @@
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// CCED_system.sv
+// Simulation of entire CCED system
+// The encoder outputs to the channel computer
+// The decoder outputs to the source computer
+// See if unencoded_bits and source_computer shows the same value
+//////////////////////////////////////////////////////////////////////////////////
+
+
+module CCED_system(
+    input logic clk,
+    input logic unencoded_bits,
+    input [2:0] choose_constraint_length,
+    output [1:0] encoder_test,
+    output [0:14] source_computer
+    );
+    
+    //Wire which connects encoder to decoder
+    wire [1:0] channel_computer;
+    
+    //I want to see what happens inside the module
+    assign encoder_test = channel_computer;
+    
+    //Encoder instantiation
+    encoder u_encoder(.unencoded_bits(unencoded_bits), 
+                      .clk(clk), 
+                      .choose_constraint_length(choose_constraint_length), 
+                      .out(channel_computer));
+    
+    //Decoder instantiation
+    decoder_sys u_decoder_sys(.encoded_bits(channel_computer),
+                              .choose_constraint_length(choose_constraint_length), 
+                              .final_output(source_computer), 
+                              .clk(clk));
+endmodule
