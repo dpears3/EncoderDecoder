@@ -1,0 +1,42 @@
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Junkyu Kwon
+// Basic version of testbench
+// The example is from Memory Structure file in Google drive
+// expected output is 1110100
+//////////////////////////////////////////////////////////////////////////////////
+
+
+module testbench_capstone;
+    logic clk = 1'b0;
+    logic [1:0] encoded_bits;
+    logic [2:0] choose_constraint_length;
+    logic [14:0] final_output;
+    
+    integer num_bits = 0;
+    
+    initial forever #5 clk = ~clk;
+    
+    decoder_sys u_decoder_sys(.encoded_bits(encoded_bits),
+    .choose_constraint_length(2'b11), 
+    .final_output(final_output), 
+    .clk(clk));
+    
+    initial begin
+        #5;
+        encoded_bits = 2'b11;
+        #5;
+        encoded_bits = 2'b11;
+        #5;
+        encoded_bits = 2'b10;
+        #5;
+        encoded_bits = 2'b01;
+        #5;
+        encoded_bits = 2'b10;
+        #5;
+        encoded_bits = 2'b10;
+        #5;
+        encoded_bits = 2'b11;
+        
+    end
+endmodule
