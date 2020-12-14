@@ -26,7 +26,7 @@ module decoder_sys(encoded_bits, choose_constraint_length, final_output, clk);
     input [1:0] encoded_bits;               // 2 Bits received 
     input [2:0] choose_constraint_length;   // Values 3 - 6, assumed here as 3
     
-    output [15:0] final_output; //Final output
+    output [0:14] final_output; //Final output
     
     // Counting Variables
     integer symbol_num = 0;
@@ -70,7 +70,7 @@ module decoder_sys(encoded_bits, choose_constraint_length, final_output, clk);
     reg [1:0] branches [0:7]; 
     
     // Branch 1 or 0 was the min? Useful for traceback
-    reg best_path [0:14];
+    reg [0:14] best_path;
     
     reg [1:0] given_input_next_output [0:7] = {2'b00, 2'b11, 2'b10, 2'b01, 2'b11, 2'b00, 2'b01, 2'b10};
                                // States:      0 (00)        1 (10)        2 (01)        3 (11)
@@ -204,16 +204,16 @@ module decoder_sys(encoded_bits, choose_constraint_length, final_output, clk);
         // Picking an output
         if (symbol_num >=15) begin
             //ouput the decoded bit
-            final_output <= branches[];
+            //final_output <= branches[];
             //shift over
             
             //insert new data
 
             //ouput the decoded bit
             //Find the smallest hamming distance path-metric
-            for (i = 0; i < 8; i++) begin
-                trellis_path_metric[symbol_num % 15][i];
-            end
+            //for (i = 0; i < 8; i++) begin
+            //    trellis_path_metric[symbol_num % 15][i];
+            //end
             //end_index = symbol_num % 15;
         end
         symbol_num++;
