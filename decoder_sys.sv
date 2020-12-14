@@ -19,14 +19,14 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-module decoder_sys(encoded_bits, choose_constraint_length, clk);
+module decoder_sys(encoded_bits, choose_constraint_length, final_output, clk);
 
     // Inputs
     input clk;
     input [1:0] encoded_bits;               // 2 Bits received 
     input [2:0] choose_constraint_length;   // Values 3 - 6, assumed here as 3
     
-    output [15:0] final_output //Final output
+    output [15:0] final_output; //Final output
     
     // Counting Variables
     integer symbol_num = 0;
@@ -127,7 +127,7 @@ module decoder_sys(encoded_bits, choose_constraint_length, clk);
         //end
     
         // Trellis code
-        if (symbol_num >=2 and symbol_num <15) begin
+        if (symbol_num >=2 && symbol_num <15) begin
         
             // Calculate the hamming distance for each branch
             for (i = 0; i < 8; i = i + 1) begin
