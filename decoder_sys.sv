@@ -76,7 +76,7 @@ module decoder_sys(encoded_bits, choose_constraint_length, final_output, clk);
                                // States:      0 (00)        1 (10)        2 (01)        3 (11)
                                // input/output 0/00,  1/11,  0/10,  1/01,  0/11,  1/00,  0/01,  1/10
     
-    assign best_path = final_output;
+    assign final_output = best_path;
     
     always @(posedge clk) begin
     //s0 = 00 , s1 = 10, s2 =01, s3 11
