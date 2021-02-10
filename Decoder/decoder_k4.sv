@@ -19,7 +19,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-module decoder_sys(encoded_bits, choose_constraint_length, final_output, clk);
+module decoder_sys_k4(encoded_bits, choose_constraint_length, final_output, clk);
 
     // Inputs
     input clk;
