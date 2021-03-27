@@ -34,9 +34,15 @@ wire error_out;
 wire [2:0] error_loc;
 wire RxD_data_ready;
 wire [7:0] RxD_data; // Recieved data
+reg [2:0] data_in;
 reg [7:0] data;
 reg [7:0] data_out;
 
+    wire clk;
+    wire [1:0] encoded_bits;               // 2 Bits received 
+    wire [2:0] choose_constraint_length;   // Values 3 - 6, assumed here as 3
+    
+decoder_sys decoder_s(.encoded_bits(data_in), .choose_constraint_length(3'b011), .final_output(data_out), .clk(clk));
 Debounce_Top center_deb(.clk(clk), .data_in(BTNC), .data_out(center));
 Debounce_Top up_deb(.clk(clk), .data_in(BTNU), .data_out(up));
 async_receiver RX(.clk(clk), .RxD(UART_TXD_IN), .RxD_data_ready(RxD_data_ready), .RxD_data(RxD_data));
