@@ -54,35 +54,11 @@ async_transmitter TX(.clk(clk), .TxD(UART_RXD_OUT), .TxD_start(center), .TxD_dat
 //// Module Code ////
 always @(posedge clk) begin
 
-    // When up pushed, data is stored
+    // 8 Bits recieved at a time
     if (up) begin
         //data <= RxD_data;
-        //data_out <= RxD_data;
-        TxD_data <= 16'b1111111111111111;
+        TxD_data <= RxD_data;
     end
-    
-//    if (error_out) begin
-//        case (error_loc)
-//            3'b000:
-//                data_out <= {data[7:1], !data[0]};
-//            3'b001:
-//                data_out <= {data[7:2], !data[1], data[0]};
-//            3'b010:
-//                data_out <= {data[7:3], !data[2], data[1:0]};
-//            3'b011:
-//                data_out <= {data[7:4], !data[3], data[2:0]};
-//            3'b100:
-//                data_out <= {data[7:5], !data[4], data[3:0]};
-//            3'b101:
-//                data_out <= {data[7:6], !data[5], data[4:0]};
-//            3'b110:
-//                data_out <= {data[7], !data[6], data[5:0]};           
-//        endcase
-//        TxD_data <= 8'b11111111; //FF
-//    end
-//    else begin
-//        TxD_data <= {1'b0, data_out[6:0]};
-//    end
     
 end
 
