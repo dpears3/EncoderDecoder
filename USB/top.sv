@@ -20,12 +20,16 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module top(UART_TXD_IN, UART_RXD_OUT, BTNC, BTNU, clk);
+module top(UART_TXD_IN, UART_RXD_OUT, BTNC, BTNU, BTND, clk);
 
 // Inputs and outputs
-input BTNC, BTNU, clk;
+input BTNC, BTNU, BTND, clk;
 input UART_TXD_IN;
 output UART_RXD_OUT;
+
+// Data to transmit 8 bits at a time
+reg data_transmit [7:0];
+reg [7:0] data;
 
 // Variables for UART
 wire center, up;
@@ -34,31 +38,51 @@ wire error_out;
 wire [2:0] error_loc;
 wire RxD_data_ready;
 wire [7:0] RxD_data; // Recieved data
-reg [2:0] data_in;
-reg [7:0] data;
-reg [7:0] data_out;
+reg [7:0] counter;
+reg [31:0] buffer;
 
-    wire clk;
-    wire [1:0] encoded_bits;               // 2 Bits received 
-    wire [2:0] choose_constraint_length;   // Values 3 - 6, assumed here as 3
-    
-decoder_sys decoder_s(.encoded_bits(data_in), .choose_constraint_length(3'b011), .final_output(data_out), .clk(clk));
+wire [1:0] encoded_bits;               // 2 Bits received 
+wire [2:0] choose_constraint_length;   // Values 3 - 6, assumed here as 3
+
+//decoder_sys decoder_s(.encoded_bits(data_in), .choose_constraint_length(3'b011), .final_output(data_out), .clk(clk));
 Debounce_Top center_deb(.clk(clk), .data_in(BTNC), .data_out(center));
 Debounce_Top up_deb(.clk(clk), .data_in(BTNU), .data_out(up));
+Debounce_Top up_deb(.clk(clk), .data_in(BTND), .data_out(down));
 async_receiver RX(.clk(clk), .RxD(UART_TXD_IN), .RxD_data_ready(RxD_data_ready), .RxD_data(RxD_data));
-async_transmitter TX(.clk(clk), .TxD(UART_RXD_OUT), .TxD_start(center), .TxD_data(TxD_data));
-
-//ECC_7 hamming(.data_in(data_out[6:0]), .error_out(error_out), .error_loc(error_loc), .clk(clk));
+async_transmitter TX(.clk(clk), .TxD(UART_RXD_OUT), .TxD_start(center), .TxD_data(TxD_data)); // Center button sends buffer back
 
 
 //// Module Code ////
 always @(posedge clk) begin
 
-    // 8 Bits recieved at a time
+    // Print Data out
     if (up) begin
-        //data <= RxD_data;
-        TxD_data <= RxD_data;
+        //TxD_data <= RxD_data;
+		//TxD_data <= counter;
+		TxD_data <= buffer[7:0];
+		buffer <= buffer >> 8;
     end
+	
+	if (down) begin
+		counter <= 0;
+	end
+	
+	// Parse inputs of 4 bytes
+	if (RxD_data_ready) begin
+		counter++;
+		if (counter == 1) begin 
+			buffer[7:0] <= RxD_data;
+		end
+		if (counter == 2) begin 
+			buffer[15:8] <= RxD_data;
+		end
+		if (counter == 3) begin 
+			buffer[23:16] <= RxD_data;
+		end
+		if (counter == 4) begin 
+			buffer[31:24] <= RxD_data;
+		end
+	end
     
 end
 
