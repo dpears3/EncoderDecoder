@@ -49,6 +49,7 @@ encoder_sys encoder(.unencoded_bits(unencoded_bit), .clk(clk), .choose_constrain
 Debounce_Top center_deb(.clk(clk), .data_in(BTNC), .data_out(center));
 Debounce_Top up_deb(.clk(clk), .data_in(BTNU), .data_out(up));
 Debounce_Top down_deb(.clk(clk), .data_in(BTND), .data_out(down));
+Debounce_Top left_deb(.clk(clk), .data_in(BTNL), .data_out(left));
 async_receiver RX(.clk(clk), .RxD(UART_TXD_IN), .RxD_data_ready(RxD_data_ready), .RxD_data(RxD_data));
 async_transmitter TX(.clk(clk), .TxD(UART_RXD_OUT), .TxD_start(center), .TxD_data(TxD_data)); // Center button sends buffer back
 
