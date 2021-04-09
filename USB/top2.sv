@@ -49,10 +49,10 @@ reg [2:0] out;   // Values 3 - 6, assumed here as 3
 
 reg [7:0] bit_counter;
 reg [7:0] byte_counter;
-reg [7:0] unencoded_bits;
+reg unencoded_bit;
 
 //decoder_sys decoder_s(.encoded_bits(data_in), .choose_constraint_length(3'b011), .final_output(data_out), .clk(clk));
-encoder_sys encoder_k3(.unencoded_bits(unencoded_bits), .clk(clk), .choose_constraint_length(choose_constraint_length), .out(out));
+encoder_sys encoder_k3(.unencoded_bit(unencoded_bit), .clk(clk), .choose_constraint_length(choose_constraint_length), .out(out));
 Debounce_Top center_deb(.clk(clk), .data_in(BTNC), .data_out(center));
 Debounce_Top up_deb(.clk(clk), .data_in(BTNU), .data_out(up));
 Debounce_Top down_deb(.clk(clk), .data_in(BTND), .data_out(down));
@@ -77,7 +77,7 @@ always @(posedge clk) begin
 	
 	if (byte_counter == 1) begin
 		
-		unencoded_bits <= buffer[bit_counter];
+		unencoded_bit <= buffer[bit_counter];
 
 		encode_buffer[1:0] <= out;
 		encode_buffer << 2;
@@ -92,7 +92,7 @@ always @(posedge clk) begin
 	
 	if (byte_counter == 2) begin
 		
-		unencoded_bits <= buffer[bit_counter];
+		unencoded_bit <= buffer[bit_counter];
 
 		encode_buffer[1:0] <= out;
 		encode_buffer << 2;
@@ -107,7 +107,7 @@ always @(posedge clk) begin
 	
 	if (byte_counter == 3) begin
 		
-		unencoded_bits <= buffer[bit_counter];
+		unencoded_bit <= buffer[bit_counter];
 
 		encode_buffer[1:0] <= out;
 		encode_buffer << 2;
@@ -122,7 +122,7 @@ always @(posedge clk) begin
 	
 	if (byte_counter == 4) begin
 		
-		unencoded_bits <= buffer[bit_counter];
+		unencoded_bit <= buffer[bit_counter];
 
 		encode_buffer[1:0] <= out;
 		encode_buffer << 2;
@@ -160,3 +160,4 @@ always @(posedge clk) begin
 end
 
 endmodule
+
