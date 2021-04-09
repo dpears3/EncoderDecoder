@@ -45,6 +45,7 @@ wire [1:0] encoded_bits;               // 2 Bits received
 wire [2:0] choose_constraint_length;   // Values 3 - 6, assumed here as 3
 
 //decoder_sys decoder_s(.encoded_bits(data_in), .choose_constraint_length(3'b011), .final_output(data_out), .clk(clk));
+encoder_sys encoder(.unencoded_bits(unencoded_bit), .clk(clk), .choose_constraint_length(choose_constraint_length), .out(out))
 Debounce_Top center_deb(.clk(clk), .data_in(BTNC), .data_out(center));
 Debounce_Top up_deb(.clk(clk), .data_in(BTNU), .data_out(up));
 Debounce_Top down_deb(.clk(clk), .data_in(BTND), .data_out(down));
