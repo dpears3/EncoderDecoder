@@ -42,7 +42,8 @@ reg [7:0] counter;
 reg [7:0] bit_number;
 reg [31:0] buffer;
 reg [63:0] encode_buffer;
-
+reg data_send_ready;
+reg [7:0] send_counter;
 
 reg unencoded_bit;               // 2 Bits received 
 reg [2:0] out;   // Values 3 - 6, assumed here as 3
@@ -51,6 +52,8 @@ reg [7:0] bit_counter;
 reg [7:0] byte_counter;
 reg unencoded_bit;
 
+wire send_data;
+
 //decoder_sys decoder_s(.encoded_bits(data_in), .choose_constraint_length(3'b011), .final_output(data_out), .clk(clk));
 encoder_sys encoder_k3(.unencoded_bit(unencoded_bit), .clk(clk), .choose_constraint_length(choose_constraint_length), .out(out));
 Debounce_Top center_deb(.clk(clk), .data_in(BTNC), .data_out(center));
@@ -58,7 +61,7 @@ Debounce_Top up_deb(.clk(clk), .data_in(BTNU), .data_out(up));
 Debounce_Top down_deb(.clk(clk), .data_in(BTND), .data_out(down));
 Debounce_Top left_deb(.clk(clk), .data_in(BTNL), .data_out(left));
 async_receiver RX(.clk(clk), .RxD(UART_TXD_IN), .RxD_data_ready(RxD_data_ready), .RxD_data(RxD_data));
-async_transmitter TX(.clk(clk), .TxD(UART_RXD_OUT), .TxD_start(center), .TxD_data(TxD_data)); // Center button sends buffer back
+async_transmitter TX(.clk(clk), .TxD(UART_RXD_OUT), .TxD_start(send_data), .TxD_data(TxD_data)); // sends buffer back when ready
 
 
 //// Module Code ////
@@ -70,12 +73,24 @@ always @(posedge clk) begin
 		encode_buffer <= encode_buffer >> 8;
     end
 	
+	if (data_send_ready) begin
+		TxD_data <= encode_buffer[7:0];
+		encode_buffer[7:0] >> 8;
+		send_data = 1'b1;
+		send_counter++;
+		if (send_counter == 8) begin
+			data_send_ready = 1'b0;
+			send_counter == 0;
+		end
+	end
+	
+	
 	if (counter == 4) begin
 		byte_counter <= 1;
 		counter++;
 	end
 	
-	if (byte_counter == 1) begin
+	if (byte_counter > 0 and byte_counter < 5) begin
 		
 		unencoded_bit <= buffer[bit_counter];
 
@@ -87,53 +102,14 @@ always @(posedge clk) begin
 			bit_counter = 0;
 			byte_counter++;
 			buffer >> 8;
+			
+			// All 8 bytes from encode_buffer ready
+			if (byte_counter == 5) begin
+				data_send_ready = 1'b1;
+			end
 		end
 	end
-	
-	if (byte_counter == 2) begin
-		
-		unencoded_bit <= buffer[bit_counter];
 
-		encode_buffer[1:0] <= out;
-		encode_buffer << 2;
-		bit_counter++;
-		
-		if (bit_counter > 7) begin
-			bit_counter = 0;
-			byte_counter++;
-			buffer >> 8;
-		end
-	end
-	
-	if (byte_counter == 3) begin
-		
-		unencoded_bit <= buffer[bit_counter];
-
-		encode_buffer[1:0] <= out;
-		encode_buffer << 2;
-		bit_counter++;
-		
-		if (bit_counter > 7) begin
-			bit_counter = 0;
-			byte_counter++;
-			buffer >> 8;
-		end
-	end
-	
-	if (byte_counter == 4) begin
-		
-		unencoded_bit <= buffer[bit_counter];
-
-		encode_buffer[1:0] <= out;
-		encode_buffer << 2;
-		bit_counter++;
-		
-		if (bit_counter > 7) begin
-			bit_counter = 0;
-			byte_counter++;
-			buffer >> 8;
-		end
-	end
 	
 	// Recieve 4 bytes of Data, down resets
 	if (down) begin
@@ -156,6 +132,8 @@ always @(posedge clk) begin
 			buffer[31:24] <= RxD_data;
 		end
 	end
+	
+	send_data = 1'b0;
     
 end
 
