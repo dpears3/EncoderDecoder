@@ -45,17 +45,17 @@ reg [63:0] encode_buffer;
 reg data_send_ready;
 reg [7:0] send_counter;
 
-reg unencoded_bit;               // 2 Bits received 
+reg unencoded_bit;               // 1 Bit received 
 reg [2:0] out;   // Values 3 - 6, assumed here as 3
 
 reg [7:0] bit_counter;
 reg [7:0] byte_counter;
-reg unencoded_bit;
 
-wire send_data;
+
+reg send_data;
 
 //decoder_sys decoder_s(.encoded_bits(data_in), .choose_constraint_length(3'b011), .final_output(data_out), .clk(clk));
-encoder_sys encoder_k3(.unencoded_bit(unencoded_bit), .clk(clk), .choose_constraint_length(choose_constraint_length), .out(out));
+encoder_k3 encoder_sys(.unencoded_bit(unencoded_bit), .clk(clk), .choose_constraint_length(choose_constraint_length), .out(out));
 Debounce_Top center_deb(.clk(clk), .data_in(BTNC), .data_out(center));
 Debounce_Top up_deb(.clk(clk), .data_in(BTNU), .data_out(up));
 Debounce_Top down_deb(.clk(clk), .data_in(BTND), .data_out(down));
@@ -69,39 +69,39 @@ always @(posedge clk) begin
 
     // Print Data out, push up and then center
     if (up) begin
-		TxD_data <= encode_buffer[7:0];
-		encode_buffer <= encode_buffer >> 8;
+	TxD_data <= encode_buffer[7:0];
+	encode_buffer <= encode_buffer >> 8;
     end
 	
-	if (data_send_ready) begin
+	/*if (data_send_ready) begin
 		TxD_data <= encode_buffer[7:0];
-		encode_buffer[7:0] >> 8;
-		send_data = 1'b1;
+		encode_buffer <= encode_buffer >> 8;
+		send_data <= 1'b1;
 		send_counter++;
 		if (send_counter == 8) begin
 			data_send_ready = 1'b0;
-			send_counter == 0;
+			send_counter = 0;
 		end
 	end
-	
+	*/
 	
 	if (counter == 4) begin
 		byte_counter <= 1;
 		counter++;
 	end
 	
-	if (byte_counter > 0 and byte_counter < 5) begin
+	if (byte_counter > 0 && byte_counter < 5) begin
 		
 		unencoded_bit <= buffer[bit_counter];
 
 		encode_buffer[1:0] <= out;
-		encode_buffer << 2;
+		encode_buffer <= encode_buffer << 2;
 		bit_counter++;
 		
 		if (bit_counter > 7) begin
 			bit_counter = 0;
 			byte_counter++;
-			buffer >> 8;
+		buffer <=	buffer >> 8;
 			
 			// All 8 bytes from encode_buffer ready
 			if (byte_counter == 5) begin
