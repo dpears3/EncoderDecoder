@@ -32,7 +32,7 @@ module encoder_k3(unencoded_bit, clk, rst, choose_constraint_length, out);
         out[1] <= (unencoded_bit^shift_reg[1])^shift_reg[0];
         out[0] <= unencoded_bit^shift_reg[0];
         shift_reg = shift_reg>>1;
-        shift_reg[1] = unencoded_bits;
+        shift_reg[1] = unencoded_bit;
     end
 
 endmodule
