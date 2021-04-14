@@ -50,7 +50,7 @@ reg [2:0] out;   // Values 3 - 6, assumed here as 3
 
 reg [7:0] bit_counter;
 reg [7:0] byte_counter;
-
+reg index;
 
 reg send_data;
 
@@ -61,7 +61,7 @@ Debounce_Top up_deb(.clk(clk), .data_in(BTNU), .data_out(up));
 Debounce_Top down_deb(.clk(clk), .data_in(BTND), .data_out(down));
 Debounce_Top left_deb(.clk(clk), .data_in(BTNL), .data_out(left));
 async_receiver RX(.clk(clk), .RxD(UART_TXD_IN), .RxD_data_ready(RxD_data_ready), .RxD_data(RxD_data));
-async_transmitter TX(.clk(clk), .TxD(UART_RXD_OUT), .TxD_start(send_data), .TxD_data(TxD_data)); // sends buffer back when ready
+async_transmitter TX(.clk(clk), .TxD(UART_RXD_OUT), .TxD_start(center), .TxD_data(TxD_data)); // sends buffer back when ready
 
 
 //// Module Code ////
@@ -69,11 +69,13 @@ always @(posedge clk) begin
 
     // Print Data out, push up and then center
     if (up) begin
-	TxD_data <= encode_buffer[7:0];
-	encode_buffer <= encode_buffer >> 8;
+	   TxD_data <= encode_buffer[7:0];
+	   encode_buffer <= encode_buffer >> 8;
+	   //TxD_data <= buffer[7:0];
+	  // buffer <= buffer >> 8;
     end
 	
-	/*if (data_send_ready) begin
+/*	if (left) begin
 		TxD_data <= encode_buffer[7:0];
 		encode_buffer <= encode_buffer >> 8;
 		send_data <= 1'b1;
@@ -90,18 +92,22 @@ always @(posedge clk) begin
 		counter++;
 	end
 	
-	if (byte_counter > 0 && byte_counter < 5) begin
-		
-		unencoded_bit <= buffer[bit_counter];
-
-		encode_buffer[1:0] <= out;
-		encode_buffer <= encode_buffer << 2;
+	if (byte_counter >0 && byte_counter <5) begin//Only first byte works still need to figure out shifting
+	   index = bit_counter + (byte_counter - 1) * 8;
+		unencoded_bit <= buffer[index];
+		//encode_buffer[1:0] <= out;
+	
+		encode_buffer[2* index + 1] <= out[1];
+		encode_buffer[2* index ] <= out[0];
+		//sunencoded_bit = buffer[index];
+		//encode_buffer[1:0] <= out;
+		//encode_buffer <= encode_buffer << 2;
 		bit_counter++;
 		
 		if (bit_counter > 7) begin
 			bit_counter = 0;
 			byte_counter++;
-		buffer <=	buffer >> 8;
+		//    buffer <= buffer >> 8;
 			
 			// All 8 bytes from encode_buffer ready
 			if (byte_counter == 5) begin
@@ -109,8 +115,6 @@ always @(posedge clk) begin
 			end
 		end
 	end
-
-	
 	// Recieve 4 bytes of Data, down resets
 	if (down) begin
 		counter <= 0;
@@ -138,4 +142,3 @@ always @(posedge clk) begin
 end
 
 endmodule
-
