@@ -5,7 +5,7 @@
 // 
 // Create Date: 11/04/2020 11:19:07 AM
 // Design Name: 
-// Module Name: encoder_k3
+// Module Name: encoder_k4
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
