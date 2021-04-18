@@ -7,7 +7,7 @@
 // 
 // Create Date: 12/09/2020 01:50:26 PM
 // Design Name: 
-// Module Name: decoder_sys
+// Module Name: decoder_sys_3
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
