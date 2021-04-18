@@ -1,5 +1,5 @@
 `timescale 1ns / 1ps
-// Version has Random Generator
+// Version has Random Generator and Comments
 
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
@@ -13,9 +13,9 @@
 // Tool Versions: 
 // Description: 
 // 
-// Dependencies: 
 // 
-// Revision:
+// Revision: Added Comments
+// Date of Revision: 4/17/2021
 // Revision 0.01 - File Created
 // Additional Comments:
 // 
@@ -23,7 +23,7 @@
 
 // Used for randomness
 class Packet;
-    rand bit random_num;
+    rand bit random_num;// for if two paths have same path metric a random path will be chosen
 endclass
 
 module decoder_k3(encoded_bits, choose_constraint_length, final_output, clk);
@@ -36,12 +36,11 @@ module decoder_k3(encoded_bits, choose_constraint_length, final_output, clk);
     output reg final_output; //Final output
     
     // Counting Variables
-    integer symbol_num = 0;
-    integer state_num = 0;
-    integer i = 0;
-    integer unsigned alpha = 0;
-    integer unsigned trace_index;
-    integer unsigned origin_index;
+    integer symbol_num = 0;// stores what instance of time the trellis diagram is at.
+    integer i = 0;// counter variable
+    integer unsigned alpha = 0;//Stores the value of best_path
+    integer unsigned trace_index; //stores moded index of path metric for when t>15; don't want to have out of bounds error
+    integer unsigned origin_index; //Based on min_trellis, origin_index stores the proper state
     
     // Memory
     
@@ -51,12 +50,12 @@ module decoder_k3(encoded_bits, choose_constraint_length, final_output, clk);
     
     
     // Trellis optimum Branches
-    logic [1:0] branches[0:7] = {0,0,0,0,0,0,0,0}; 
-    
+    logic [1:0] branches[0:7] = {0,0,0,0,0,0,0,0}; //Just a short version of trellis_branch_metric used for quick calculations at each time t
+    //logic is the same thing as reg
     // Branch 1 or 0 was the min? Useful for traceback
     reg best_path [0:14][0:3] = {{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},
                                  {0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},
-                                 {0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
+                                 {0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}};// a 1 corresponds to S2 or S3 and a 0 corresponds to S0 or S1
     
     // How the states are described
     reg [1:0] states [0:3] = {2'b00, 2'b10, 2'b01, 2'b11};
@@ -67,50 +66,52 @@ module decoder_k3(encoded_bits, choose_constraint_length, final_output, clk);
     
     // Trellis connecting variable, paired with best_path, Destination: Origin
     reg [2:0] trellis_connection [0:7] = {0,  4,   1,  5,   2,  6,   3,  7};
-    //                                 S0:S0,S2 S1:S0,S2 S2:S1,S3 S3:S1,S3
-    reg [2:0] min_trellis = 0;    
+                            //Format -Source:Destiation;
+                            //English - S0:S0 Going backwards from S0 to S0
+                            // S0:S0,S0:S2 S1:S0,S1:S2 S2:S1,S2:S3 S3:S1,S3:S3
+    reg [2:0] min_trellis = 0; //Stores the index of the best_path based on trellis_path_metric 
     
     // Creating the random variable
-    Packet pkt = new();
+    Packet pkt = new();// an object to store random variable
     
     always @(posedge clk) begin
     
         // Initializing, start from zero
-        if (symbol_num == 0) begin
-        
-            if ((encoded_bits[1:0] ^ given_input_next_output[0][1:0]) > 1) begin
-                branches[0][1:0] <= (encoded_bits ^ given_input_next_output[0]) - 1;
-                trellis_branch_metric[0][0] <= (encoded_bits ^ given_input_next_output[0]) - 1;
-                trellis_path_metric[0][0] <= (encoded_bits ^ given_input_next_output[0]) - 1;
+        if (symbol_num == 0) begin// time t = 0
+            //going from XOR value to number of errors
+            if ((encoded_bits ^ given_input_next_output[0]) > 1) begin// if encoded_bits == 11 or 10 and given_input_next_output== 00
+           //     branches[0] <= (encoded_bits ^ given_input_next_output[0]) - 1;// Not needed
+                trellis_branch_metric[0][0] <= (encoded_bits ^ given_input_next_output[0]) - 1;// stores the correct number errors in trellis_branch_metric
+                trellis_path_metric[0][0] <= (encoded_bits ^ given_input_next_output[0]) - 1; // have to subtract 1 b/c 11 and 00 should be diff. of 2 and not 3
             end
-            else begin
-                branches[0][1:0] <= encoded_bits ^ given_input_next_output[0];
-                trellis_branch_metric[0][0] <= (encoded_bits ^ given_input_next_output[0]);
-                trellis_path_metric[0][0] <= (encoded_bits ^ given_input_next_output[0]);
+            else begin// if encoded_bits == 01 or 00 and given_input_next_output== 00
+              //  branches[0] <= encoded_bits ^ given_input_next_output[0];//Not Needed
+                trellis_branch_metric[0][0] <= (encoded_bits ^ given_input_next_output[0]);// stores the correct number errors in trellis_branch_metric
+                trellis_path_metric[0][0] <= (encoded_bits ^ given_input_next_output[0]);// stores the correct number errors in trellis_path_metric
             end
-            if ((encoded_bits ^ given_input_next_output[1]) > 1) begin
-                branches[1][1:0] <= (encoded_bits ^ given_input_next_output[1]) - 1;
+            if ((encoded_bits ^ given_input_next_output[1]) > 1) begin// if encoded_bits == 11 or 10 and given_input_next_output== 11
+         //       branches[1] <= (encoded_bits ^ given_input_next_output[1]) - 1;//Not Needed
                 trellis_branch_metric[0][1] <= (encoded_bits ^ given_input_next_output[1]) - 1;
                 trellis_path_metric[0][1] <= (encoded_bits ^ given_input_next_output[1]) - 1;
             end
-            else begin
-                branches[1][1:0] <= encoded_bits ^ given_input_next_output[1];
-                trellis_branch_metric[0][1] <= (encoded_bits ^ given_input_next_output[1]);
-                trellis_path_metric[0][1] <= (encoded_bits ^ given_input_next_output[1]);
+            else begin// if encoded_bits == 01 or 00 and given_input_next_output== 11
+           //     branches[1] <= encoded_bits ^ given_input_next_output[1];//Not Needed
+                trellis_branch_metric[0][1] <= (encoded_bits ^ given_input_next_output[1]);// stores the correct number errors in trellis_branch_metric
+                trellis_path_metric[0][1] <= (encoded_bits ^ given_input_next_output[1]);// stores the correct number errors in trellis_path_metric
             end
         end
         
-        if (symbol_num == 1) begin
+        if (symbol_num == 1) begin// time t = 1
             branches[0] = encoded_bits ^ given_input_next_output[0];
             branches[1] = encoded_bits ^ given_input_next_output[1];
             branches[2] = encoded_bits ^ given_input_next_output[2];
             branches[3] = encoded_bits ^ given_input_next_output[3];
-            
+            // have to perform same subtracting step as in symbol_num ==0
+            //trellis_path_metric has to be updated twice to make trace back is easier when comparing values
             if (branches[0] > 1) begin
                 trellis_branch_metric[1][0] <= branches[0] - 1;
                 trellis_path_metric[1][0] <= trellis_path_metric[0][0] + branches[0] - 1;
                 trellis_path_metric[1][4] <= trellis_path_metric[0][0] + branches[0] - 1;
-                branches[0] <= branches[0] - 1; // Normalize, 11 -> 2 and 10 -> 1...
             end
             else begin
                 trellis_branch_metric[1][0] <= branches[0];
@@ -121,7 +122,7 @@ module decoder_k3(encoded_bits, choose_constraint_length, final_output, clk);
                 trellis_branch_metric[1][1] <= branches[1] - 1;
                 trellis_path_metric[1][1] <= trellis_path_metric[0][0] + branches[1] - 1;
                 trellis_path_metric[1][5] <= trellis_path_metric[0][0] + branches[1] - 1;
-                branches[1] <= branches[1] - 1; // Normalize, 11 -> 2 and 10 -> 1...
+         
             end 
             else begin
                 trellis_branch_metric[1][1] <= branches[1];
@@ -132,7 +133,7 @@ module decoder_k3(encoded_bits, choose_constraint_length, final_output, clk);
                 trellis_branch_metric[1][2] <= branches[2] - 1;
                 trellis_path_metric[1][2] <= trellis_path_metric[0][1] + branches[2] - 1;
                 trellis_path_metric[1][6] <= trellis_path_metric[0][1] + branches[2] - 1;
-                branches[2] <= branches[2] - 1; // Normalize, 11 -> 2 and 10 -> 1...
+             
             end
             else begin
                 trellis_branch_metric[1][2] <= branches[2];
@@ -143,7 +144,7 @@ module decoder_k3(encoded_bits, choose_constraint_length, final_output, clk);
                 trellis_branch_metric[1][3] <= branches[3] - 1;
                 trellis_path_metric[1][3] <= trellis_path_metric[0][1] + branches[3] - 1;
                 trellis_path_metric[1][7] <= trellis_path_metric[0][1] + branches[3] - 1;
-                branches[3] <= branches[3] - 1; // Normalize, 11 -> 2 and 10 -> 1...
+    
             end
             else begin
                 trellis_branch_metric[1][3] <= branches[3];
@@ -153,14 +154,14 @@ module decoder_k3(encoded_bits, choose_constraint_length, final_output, clk);
         end
 
         // Trellis code
-        if (symbol_num >= 2) begin
+        if (symbol_num >= 2) begin// for time t >= 2 
         
             // Calculate the hamming distance for each branch
             for (i = 0; i < 8; i = i + 1) begin
             
                 // Calculating
-                branches[i] = encoded_bits ^ given_input_next_output[i];
-                if (branches[i] > 1) begin
+                branches[i] = encoded_bits ^ given_input_next_output[i]; //XORing branch like in previous iterations
+                if (branches[i] > 1) begin// subtracting 1 like previous iterations
                     branches[i] = branches[i] - 1; // Normalize, 11 -> 2 and 10 -> 1...
                 end
                 
@@ -168,7 +169,7 @@ module decoder_k3(encoded_bits, choose_constraint_length, final_output, clk);
                 trellis_branch_metric[symbol_num % 15][i] = branches[i];
             end
             
-            // Path metric based on previous plus the current branch
+            // The following 4 if statements update Path metric based on previous path plus the current branch
             // i=0,1: Updating Min(Path[0], Path[4]), S0 -> S0 better than S2 -> S0
             if (trellis_path_metric[(symbol_num - 1) % 15][0] < trellis_path_metric[(symbol_num - 1) % 15][4])  begin
                 trellis_path_metric[symbol_num % 15][0] = trellis_path_metric[(symbol_num - 1) % 15][0] + branches[0];
@@ -217,11 +218,13 @@ module decoder_k3(encoded_bits, choose_constraint_length, final_output, clk);
                 trellis_path_metric[symbol_num % 15][7] = trellis_path_metric[(symbol_num - 1) % 15][7] + branches[7];
             end                  
        
-            // Calculating the best path for this current state, S0
+    // Calculating the best path for this current state,
+    //From lines 221 - 267, seeing at each state what is the best previous path and storing it in best_path
+            //S0
             if (trellis_path_metric[symbol_num % 15][0] < trellis_path_metric[symbol_num % 15][4]) begin
                 best_path[symbol_num % 15][0] = 1'b0;
             end
-            else if (trellis_path_metric[symbol_num % 15][0] == trellis_path_metric[symbol_num % 15][4]) begin
+            else if (trellis_path_metric[symbol_num % 15][0] == trellis_path_metric[symbol_num % 15][4]) begin //for if the previous paths have same value randomly pick where to go back
                 pkt.randomize();
                 best_path[symbol_num % 15][0] = pkt.random_num;
             end
@@ -265,15 +268,15 @@ module decoder_k3(encoded_bits, choose_constraint_length, final_output, clk);
                 best_path[symbol_num % 15][3] = 1'b1;
             end
        
-        end
+        end// matches with symbol_num >=2
         
-        // Picking an output
+  // Picking an output
         if (symbol_num >= 14) begin
             
             // Traceback, which is the best ending path metric?
             trace_index = (symbol_num) % 15;
             min_trellis = 0;
-            
+            //What is the best path at the last time t
             for (int i = 0; i < 8; i++) begin
                 if (trellis_path_metric[trace_index][min_trellis] > trellis_path_metric[trace_index][i]) begin
                     min_trellis = i;
@@ -293,18 +296,25 @@ module decoder_k3(encoded_bits, choose_constraint_length, final_output, clk);
                 // trellis_connection and best_path tells us the previous state
                 trace_index = (symbol_num - i) % 15;
                 origin_index = min_trellis / 2;
-                alpha = best_path[trace_index][origin_index];
-                min_trellis = trellis_connection[(origin_index) * 2 + alpha];
+                // if min_trellis == 6 or 7 the state is 3
+                // if min_trellis == 4 or 5 the state is 2
+                // if min_trellis == 2 or 3 the state is 1
+                // if min_trellis == 0 or 1 the state is 0
+                alpha = best_path[trace_index][origin_index];//alpha is 1 or 0
+                min_trellis = trellis_connection[(origin_index) * 2 + alpha];//Stores the index of the best path
+                //For instance if we are at S0 and alpha == 1 then the best previous path was S2;
+                //If we are at S0 and alpha == 0 then the best previous path was S0;
             end
             
             // Giving output
-            final_output = states[(min_trellis / 2)][1];
+            final_output = states[(min_trellis / 2)][1];//Stores the leading bit of states[] in final_output
+            //It is needed to use two parameters for the 1D array states[] beacause only the leading bit needs to be stored
             
-        end
+        end//matches with symbol_num >= 14
         
         symbol_num++;
         
-    end
+    end //matches with always
     
     
     
