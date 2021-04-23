@@ -136,14 +136,14 @@ module decoder_k4(encoded_bits, choose_constraint_length, final_output, clk);
         branches[7] <= (encoded_bits ^ given_input_next_output[7]);
         
         // Calculating the number of errors for the 8 branches
-        branches[0] <= {branches[0][1] + branches[0][0]};
-        branches[1] <= {branches[1][1] + branches[1][0]};
-        branches[2] <= {branches[2][1] + branches[2][0]};
-        branches[3] <= {branches[3][1] + branches[3][0]};
-        branches[4] <= {branches[4][1] + branches[4][0]};
-        branches[5] <= {branches[5][1] + branches[5][0]};
-        branches[6] <= {branches[6][1] + branches[6][0]};
-        branches[7] <= {branches[7][1] + branches[7][0]};
+        branches[0] <= branches[0][1] + branches[0][0];
+        branches[1] <= branches[1][1] + branches[1][0];
+        branches[2] <= branches[2][1] + branches[2][0];
+        branches[3] <= branches[3][1] + branches[3][0];
+        branches[4] <= branches[4][1] + branches[4][0];
+        branches[5] <= branches[5][1] + branches[5][0];
+        branches[6] <= branches[6][1] + branches[6][0];
+        branches[7] <= branches[7][1] + branches[7][0];
         
         // Storing branches
         trellis_branch_metric[2][0] <= branches[0];
@@ -177,66 +177,123 @@ module decoder_k4(encoded_bits, choose_constraint_length, final_output, clk);
         // Trellis code
         if (symbol_num >= 3) begin// for time t >= 3 
         
-            // Calculate the hamming distance for each branch
-            for (i = 0; i < 8; i = i + 1) begin
+       // Calculate the hamming distance for each branch
+        for (i = 0; i < 16; i = i + 1) begin
+            // Calculating XOR
+            branches[i] <= encoded_bits ^ given_input_next_output[i]; //XORing branch like in previous iterations
             
-                // Calculating
-                branches[i] = encoded_bits ^ given_input_next_output[i]; //XORing branch like in previous iterations
-                if (branches[i] > 1) begin// subtracting 1 like previous iterations
-                    branches[i] = branches[i] - 1; // Normalize, 11 -> 2 and 10 -> 1...
-                end
-                
-                // Storing
-                trellis_branch_metric[symbol_num % 15][i] = branches[i];
+            // Calculating Error
+            branches[i] <= (branches[i][1] + branches[i][0]); //XORing branch like in previous iterations
+            
+            // Storing into branch metric
+            trellis_branch_metric[symbol_num % 20][i] <= branches[i];
             end
             
-            // The following 4 if statements update Path metric based on previous path plus the current branch
-            // i=0,1: Updating Min(Path[0], Path[4]), S0 -> S0 better than S2 -> S0
-            if (trellis_path_metric[(symbol_num - 1) % 15][0] < trellis_path_metric[(symbol_num - 1) % 15][4])  begin
-                trellis_path_metric[symbol_num % 15][0] = trellis_path_metric[(symbol_num - 1) % 15][0] + branches[0];
-                trellis_path_metric[symbol_num % 15][1] = trellis_path_metric[(symbol_num - 1) % 15][0] + branches[1];
+            // The following 8 if statements update Path metric based on previous path plus the current branch
+            // i=0,1: Updating Min(Path[0], Path[8]), S0 -> S0 better than S4 -> S0
+            if (trellis_path_metric[(symbol_num - 1) % 20][0] < trellis_path_metric[(symbol_num - 1) % 15][8])  begin
+                trellis_path_metric[symbol_num % 20][0] = trellis_path_metric[(symbol_num - 1) % 20][0] + branches[0];
+                trellis_path_metric[symbol_num % 20][1] = trellis_path_metric[(symbol_num - 1) % 20][0] + branches[1];
             end
             
             // i=0,1: S2 -> S0 better than S0 -> S0
             else begin
-                trellis_path_metric[symbol_num % 15][0] = trellis_path_metric[(symbol_num - 1) % 15][4] + branches[0];
-                trellis_path_metric[symbol_num % 15][1] = trellis_path_metric[(symbol_num - 1) % 15][4] + branches[1];
+                trellis_path_metric[symbol_num % 20][0] = trellis_path_metric[(symbol_num - 1) % 20][8] + branches[0];
+                trellis_path_metric[symbol_num % 20][1] = trellis_path_metric[(symbol_num - 1) % 20][8] + branches[1];
             end
             
             // i=2,3: S0 -> S1 better than S2 -> S1
-            if (trellis_path_metric[(symbol_num - 1) % 15][1] < trellis_path_metric[(symbol_num - 1) % 15][5])  begin
-                trellis_path_metric[symbol_num % 15][2] = trellis_path_metric[(symbol_num - 1) % 15][1] + branches[2];
-                trellis_path_metric[symbol_num % 15][3] = trellis_path_metric[(symbol_num - 1) % 15][1] + branches[3];
+            if (trellis_path_metric[(symbol_num - 1) % 20][1] < trellis_path_metric[(symbol_num - 1) % 20][9])  begin
+                trellis_path_metric[symbol_num % 20][2] = trellis_path_metric[(symbol_num - 1) % 20][1] + branches[2];
+                trellis_path_metric[symbol_num % 20][3] = trellis_path_metric[(symbol_num - 1) % 20][1] + branches[3];
             end
             
             // i=2,3: S2 -> S1 better than S0 -> S1
             else begin
-                trellis_path_metric[symbol_num % 15][2] = trellis_path_metric[(symbol_num - 1) % 15][5] + branches[2];
-                trellis_path_metric[symbol_num % 15][3] = trellis_path_metric[(symbol_num - 1) % 15][5] + branches[3];
+                trellis_path_metric[symbol_num % 20][2] = trellis_path_metric[(symbol_num - 1) % 20][9] + branches[2];
+                trellis_path_metric[symbol_num % 20][3] = trellis_path_metric[(symbol_num - 1) % 20][9] + branches[3];
             end      
 
              // i=4,5: S1 -> S2 better than S3 -> S2
-            if (trellis_path_metric[(symbol_num - 1) % 15][2] < trellis_path_metric[(symbol_num - 1) % 15][6])  begin
-                trellis_path_metric[symbol_num % 15][4] = trellis_path_metric[(symbol_num - 1) % 15][2] + branches[4];
-                trellis_path_metric[symbol_num % 15][5] = trellis_path_metric[(symbol_num - 1) % 15][2] + branches[5];
+            if (trellis_path_metric[(symbol_num - 1) % 20][2] < trellis_path_metric[(symbol_num - 1) % 20][10])  begin
+                trellis_path_metric[symbol_num % 20][4] = trellis_path_metric[(symbol_num - 1) % 20][2] + branches[4];
+                trellis_path_metric[symbol_num % 20][5] = trellis_path_metric[(symbol_num - 1) % 20][2] + branches[5];
             end
             
             // i=4,5: S3 -> S2 better than S1 -> S2
             else begin
-                trellis_path_metric[symbol_num % 15][4] = trellis_path_metric[(symbol_num - 1) % 15][6] + branches[4];
-                trellis_path_metric[symbol_num % 15][5] = trellis_path_metric[(symbol_num - 1) % 15][6] + branches[5];
+                trellis_path_metric[symbol_num % 20][4] = trellis_path_metric[(symbol_num - 1) % 20][10] + branches[4];
+                trellis_path_metric[symbol_num % 20][5] = trellis_path_metric[(symbol_num - 1) % 20][10] + branches[5];
             end
             
              // i=6,7: S1 -> S3 better than S3 -> S3
-            if (trellis_path_metric[(symbol_num - 1) % 15][3] < trellis_path_metric[(symbol_num - 1) % 15][7])  begin
-                trellis_path_metric[symbol_num % 15][6] = trellis_path_metric[(symbol_num - 1) % 15][3] + branches[6];
-                trellis_path_metric[symbol_num % 15][7] = trellis_path_metric[(symbol_num - 1) % 15][3] + branches[7];
+            if (trellis_path_metric[(symbol_num - 1) % 20][3] < trellis_path_metric[(symbol_num - 1) % 20][11])  begin
+                trellis_path_metric[symbol_num % 20][6] = trellis_path_metric[(symbol_num - 1) % 20][3] + branches[6];
+                trellis_path_metric[symbol_num % 20][7] = trellis_path_metric[(symbol_num - 1) % 20][3] + branches[7];
             end
             
             // i=6,7: S3 -> S3 better than S1 -> S3
             else begin
-                trellis_path_metric[symbol_num % 15][6] = trellis_path_metric[(symbol_num - 1) % 15][7] + branches[6];
-                trellis_path_metric[symbol_num % 15][7] = trellis_path_metric[(symbol_num - 1) % 15][7] + branches[7];
+                trellis_path_metric[symbol_num % 20][6] = trellis_path_metric[(symbol_num - 1) % 20][11] + branches[6];
+                trellis_path_metric[symbol_num % 20][7] = trellis_path_metric[(symbol_num - 1) % 20][11] + branches[7];
+            end
+            
+                      // i=6,7: S1 -> S3 better than S3 -> S3
+            if (trellis_path_metric[(symbol_num - 1) % 20][4] < trellis_path_metric[(symbol_num - 1) % 20][12])  begin
+                trellis_path_metric[symbol_num % 20][8] = trellis_path_metric[(symbol_num - 1) % 20][4] + branches[8];
+                trellis_path_metric[symbol_num % 20][9] = trellis_path_metric[(symbol_num - 1) % 20][4] + branches[9];
+            end
+            
+            // i=6,7: S3 -> S3 better than S1 -> S3
+            else begin
+                trellis_path_metric[symbol_num % 20][8] = trellis_path_metric[(symbol_num - 1) % 20][12] + branches[8];
+                trellis_path_metric[symbol_num % 20][9] = trellis_path_metric[(symbol_num - 1) % 20][12] + branches[9];
+            end
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+                      // i=6,7: S1 -> S3 better than S3 -> S3
+            if (trellis_path_metric[(symbol_num - 1) % 20][3] < trellis_path_metric[(symbol_num - 1) % 20][11])  begin
+                trellis_path_metric[symbol_num % 20][6] = trellis_path_metric[(symbol_num - 1) % 20][3] + branches[6];
+                trellis_path_metric[symbol_num % 20][7] = trellis_path_metric[(symbol_num - 1) % 20][3] + branches[7];
+            end
+            
+            // i=6,7: S3 -> S3 better than S1 -> S3
+            else begin
+                trellis_path_metric[symbol_num % 20][6] = trellis_path_metric[(symbol_num - 1) % 20][11] + branches[6];
+                trellis_path_metric[symbol_num % 20][7] = trellis_path_metric[(symbol_num - 1) % 20][11] + branches[7];
+            end
+            
+                      // i=6,7: S1 -> S3 better than S3 -> S3
+            if (trellis_path_metric[(symbol_num - 1) % 20][3] < trellis_path_metric[(symbol_num - 1) % 20][11])  begin
+                trellis_path_metric[symbol_num % 20][6] = trellis_path_metric[(symbol_num - 1) % 20][3] + branches[6];
+                trellis_path_metric[symbol_num % 20][7] = trellis_path_metric[(symbol_num - 1) % 20][3] + branches[7];
+            end
+            
+            // i=6,7: S3 -> S3 better than S1 -> S3
+            else begin
+                trellis_path_metric[symbol_num % 20][6] = trellis_path_metric[(symbol_num - 1) % 20][11] + branches[6];
+                trellis_path_metric[symbol_num % 20][7] = trellis_path_metric[(symbol_num - 1) % 20][11] + branches[7];
+            end
+            
+                      // i=6,7: S1 -> S3 better than S3 -> S3
+            if (trellis_path_metric[(symbol_num - 1) % 20][3] < trellis_path_metric[(symbol_num - 1) % 20][11])  begin
+                trellis_path_metric[symbol_num % 20][6] = trellis_path_metric[(symbol_num - 1) % 20][3] + branches[6];
+                trellis_path_metric[symbol_num % 20][7] = trellis_path_metric[(symbol_num - 1) % 20][3] + branches[7];
+            end
+            
+            // i=6,7: S3 -> S3 better than S1 -> S3
+            else begin
+                trellis_path_metric[symbol_num % 20][6] = trellis_path_metric[(symbol_num - 1) % 20][11] + branches[6];
+                trellis_path_metric[symbol_num % 20][7] = trellis_path_metric[(symbol_num - 1) % 20][11] + branches[7];
             end                  
        
     // Calculating the best path for this current state,
