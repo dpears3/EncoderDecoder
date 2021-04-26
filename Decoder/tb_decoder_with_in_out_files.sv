@@ -3,9 +3,9 @@
 // Company: 
 // Engineer: 
 // 
-// Create Date: 12/14/2020 07:25:01 PM
+// Create Date: 4/26/2021
 // Design Name: 
-// Module Name: sim_decoder_sys
+// Module Name: tb_decoder_sys_4
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
