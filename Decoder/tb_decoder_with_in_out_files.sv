@@ -20,7 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module sim_decoder_sys();
+module tb_decoder_sys_4();
 
     // Inputs
     reg clk;
@@ -31,7 +31,7 @@ module sim_decoder_sys();
     wire final_output;
     
     // Instatiating
-    decoder_sys uut(.encoded_bits(encoded_bits), .choose_constraint_length(choose_constraint_length), .final_output(final_output), .clk(clk));
+    decoder_sys_4 uut(.encoded_bits(encoded_bits), .choose_constraint_length(choose_constraint_length), .final_output(final_output), .clk(clk));
 
     // Clock
     always #1 clk = ~clk;
@@ -69,7 +69,7 @@ module sim_decoder_sys();
 
         // Initialize Clock
         clk = 0;
-        #30;
+        #40;
  
  
         // Loading from file
