@@ -26,7 +26,7 @@ class Packet;
     rand bit random_num;// for if two paths have same path metric a random path will be chosen
 endclass
 
-module decoder_k4(encoded_bits, choose_constraint_length, final_output, clk);
+module decoder_sys_4(encoded_bits, choose_constraint_length, final_output, clk);
 
     // Inputs
     input clk;
@@ -53,10 +53,7 @@ module decoder_k4(encoded_bits, choose_constraint_length, final_output, clk);
     logic [2:0] branches[0:15] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}; //Just a short version of trellis_branch_metric used for quick calculations at each time t
     //logic is the same thing as reg
     // Branch 1 or 0 was the min? Useful for traceback
-    reg best_path [0:19][0:7] = {{0,0,0,0,0,0,0,0},{0,0,0,0,0,0,0,0,0},{0,0,0,0,0,0,0,0,0},{0,0,0,0,0,0,0,0,0},{0,0,0,0,0,0,0,0,0},
-                                 {0,0,0,0,0,0,0,0,0},{0,0,0,0,0,0,0,0,0},{0,0,0,0,0,0,0,0,0},{0,0,0,0,0,0,0,0,0},{0,0,0,0,0,0,0,0,0},
-                                 {0,0,0,0,0,0,0,0,0},{0,0,0,0,0,0,0,0,0},{0,0,0,0,0,0,0,0,0},{0,0,0,0,0,0,0,0,0},{0,0,0,0,0,0,0,0,0},
-                                 {0,0,0,0,0,0,0,0,0},{0,0,0,0,0,0,0,0,0},{0,0,0,0,0,0,0,0,0},{0,0,0,0,0,0,0,0,0},{0,0,0,0,0,0,0,0,0}};// a 1 corresponds to S2 or S3 and a 0 corresponds to S0 or S1
+    reg best_path [0:19][0:7]; // a 1 corresponds to S2 or S3 and a 0 corresponds to S0 or S1
     
     // How the states are described
     reg [2:0] states [0:7] = {3'b000, 3'b100, 3'b010, 3'b110, 3'b001, 3'b101, 3'b011, 3'b111};
