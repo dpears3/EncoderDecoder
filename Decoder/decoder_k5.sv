@@ -53,7 +53,7 @@ module decoder_sys_5(encoded_bits, choose_constraint_length, final_output, clk);
     logic [3:0] branches[0:31] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}; //Just a short version of trellis_branch_metric used for quick calculations at each time t
     //logic is the same thing as reg
     // Branch 1 or 0 was the min? Useful for traceback
-    reg best_path [0:19][0:7]; // a 1 corresponds to S2 or S3 and a 0 corresponds to S0 or S1
+    reg best_path [0:24][0:15]; // a 1 corresponds to S2 or S3 and a 0 corresponds to S0 or S1
     
     // How the states are described
     reg [3:0] states [0:7] = {4'b0000, 4'b1000, 4'b0100, 4'b1100, 4'b0010, 4'b1010, 4'b0110, 4'b1110, 4'b0001, 4'b1001, 4'b0101, 4'b1101,4'b0011, 4'b1011, 4'b0111, 4'b1111};
