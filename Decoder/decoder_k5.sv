@@ -217,59 +217,59 @@ module decoder_sys_5(encoded_bits, choose_constraint_length, final_output, clk);
 //        branches[15] <= branches[15][1] + branches[15][0];
         
         // Storing branches
-        trellis_branch_metric[2][0] <= branches[0];
-        trellis_branch_metric[2][1] <= branches[1];
-        trellis_branch_metric[2][2] <= branches[2];
-        trellis_branch_metric[2][3] <= branches[3];
-        trellis_branch_metric[2][4] <= branches[4];
-        trellis_branch_metric[2][5] <= branches[5];
-        trellis_branch_metric[2][6] <= branches[6];
-        trellis_branch_metric[2][7] <= branches[7];
-        trellis_branch_metric[2][8] <= branches[8];
-        trellis_branch_metric[2][9] <= branches[9];
-        trellis_branch_metric[2][10] <= branches[10];
-        trellis_branch_metric[2][11] <= branches[11];
-        trellis_branch_metric[2][12] <= branches[12];
-        trellis_branch_metric[2][13] <= branches[13];
-        trellis_branch_metric[2][14] <= branches[14];
-        trellis_branch_metric[2][15] <= branches[15];
+        trellis_branch_metric[3][0] <= branches[0];
+        trellis_branch_metric[3][1] <= branches[1];
+        trellis_branch_metric[3][2] <= branches[2];
+        trellis_branch_metric[3][3] <= branches[3];
+        trellis_branch_metric[3][4] <= branches[4];
+        trellis_branch_metric[3][5] <= branches[5];
+        trellis_branch_metric[3][6] <= branches[6];
+        trellis_branch_metric[3][7] <= branches[7];
+        trellis_branch_metric[3][8] <= branches[8];
+        trellis_branch_metric[3][9] <= branches[9];
+        trellis_branch_metric[3][10] <= branches[10];
+        trellis_branch_metric[3][11] <= branches[11];
+        trellis_branch_metric[3][12] <= branches[12];
+        trellis_branch_metric[3][13] <= branches[13];
+        trellis_branch_metric[3][14] <= branches[14];
+        trellis_branch_metric[3][15] <= branches[15];
         
         // Calculating and Storing paths
-        trellis_path_metric[2][0] <= trellis_path_metric[1][0] + branches[0];
-        trellis_path_metric[2][1] <= trellis_path_metric[1][0] + branches[1];
-        trellis_path_metric[2][2] <= trellis_path_metric[1][1] + branches[2];
-        trellis_path_metric[2][3] <= trellis_path_metric[1][1] + branches[3];
-        trellis_path_metric[2][4] <= trellis_path_metric[1][2] + branches[4];
-        trellis_path_metric[2][5] <= trellis_path_metric[1][2] + branches[5];
-        trellis_path_metric[2][6] <= trellis_path_metric[1][3] + branches[6];
-        trellis_path_metric[2][7] <= trellis_path_metric[1][3] + branches[7];
+        trellis_path_metric[3][0] <= trellis_path_metric[2][0] + branches[0];
+        trellis_path_metric[3][1] <= trellis_path_metric[2][0] + branches[1];
+        trellis_path_metric[3][2] <= trellis_path_metric[2][1] + branches[2];
+        trellis_path_metric[3][3] <= trellis_path_metric[2][1] + branches[3];
+        trellis_path_metric[3][4] <= trellis_path_metric[2][2] + branches[4];
+        trellis_path_metric[3][5] <= trellis_path_metric[2][2] + branches[5];
+        trellis_path_metric[3][6] <= trellis_path_metric[2][3] + branches[6];
+        trellis_path_metric[3][7] <= trellis_path_metric[2][3] + branches[7];
         
-        trellis_path_metric[2][8] <= trellis_path_metric[1][4] + branches[8];
-        trellis_path_metric[2][9] <= trellis_path_metric[1][4] + branches[9];
-        trellis_path_metric[2][10] <= trellis_path_metric[1][5] + branches[10];
-        trellis_path_metric[2][11] <= trellis_path_metric[1][5] + branches[11];
-        trellis_path_metric[2][12] <= trellis_path_metric[1][6] + branches[12];
-        trellis_path_metric[2][13] <= trellis_path_metric[1][6] + branches[13];
-        trellis_path_metric[2][14] <= trellis_path_metric[1][7] + branches[14];
-        trellis_path_metric[2][15] <= trellis_path_metric[1][7] + branches[15];
+        trellis_path_metric[3][8] <= trellis_path_metric[2][4] + branches[8];
+        trellis_path_metric[3][9] <= trellis_path_metric[2][4] + branches[9];
+        trellis_path_metric[3][10] <= trellis_path_metric[2][5] + branches[10];
+        trellis_path_metric[3][11] <= trellis_path_metric[2][5] + branches[11];
+        trellis_path_metric[3][12] <= trellis_path_metric[2][6] + branches[12];
+        trellis_path_metric[3][13] <= trellis_path_metric[2][6] + branches[13];
+        trellis_path_metric[3][14] <= trellis_path_metric[2][7] + branches[14];
+        trellis_path_metric[3][15] <= trellis_path_metric[2][7] + branches[15];
         
-        trellis_path_metric[2][16] <= trellis_path_metric[1][0] + branches[0];
-        trellis_path_metric[2][17] <= trellis_path_metric[1][0] + branches[1];
-        trellis_path_metric[2][18] <= trellis_path_metric[1][1] + branches[2];
-        trellis_path_metric[2][19] <= trellis_path_metric[1][1] + branches[3];
-        trellis_path_metric[2][20] <= trellis_path_metric[1][2] + branches[4];
-        trellis_path_metric[2][21] <= trellis_path_metric[1][2] + branches[5];
-        trellis_path_metric[2][22] <= trellis_path_metric[1][3] + branches[6];
-        trellis_path_metric[2][23] <= trellis_path_metric[1][3] + branches[7];
+        trellis_path_metric[3][16] <= trellis_path_metric[2][0] + branches[0];
+        trellis_path_metric[3][17] <= trellis_path_metric[2][0] + branches[1];
+        trellis_path_metric[3][18] <= trellis_path_metric[2][1] + branches[2];
+        trellis_path_metric[3][19] <= trellis_path_metric[2][1] + branches[3];
+        trellis_path_metric[3][20] <= trellis_path_metric[2][2] + branches[4];
+        trellis_path_metric[3][21] <= trellis_path_metric[2][2] + branches[5];
+        trellis_path_metric[3][22] <= trellis_path_metric[2][3] + branches[6];
+        trellis_path_metric[3][23] <= trellis_path_metric[2][3] + branches[7];
         
-        trellis_path_metric[2][24] <= trellis_path_metric[1][4] + branches[8];
-        trellis_path_metric[2][25] <= trellis_path_metric[1][4] + branches[9];
-        trellis_path_metric[2][26] <= trellis_path_metric[1][5] + branches[10];
-        trellis_path_metric[2][27] <= trellis_path_metric[1][5] + branches[11];
-        trellis_path_metric[2][28] <= trellis_path_metric[1][6] + branches[12];
-        trellis_path_metric[2][29] <= trellis_path_metric[1][6] + branches[13];
-        trellis_path_metric[2][30] <= trellis_path_metric[1][7] + branches[14];
-        trellis_path_metric[2][31] <= trellis_path_metric[1][7] + branches[15];
+        trellis_path_metric[3][24] <= trellis_path_metric[2][4] + branches[8];
+        trellis_path_metric[3][25] <= trellis_path_metric[2][4] + branches[9];
+        trellis_path_metric[3][26] <= trellis_path_metric[2][5] + branches[10];
+        trellis_path_metric[3][27] <= trellis_path_metric[2][5] + branches[11];
+        trellis_path_metric[3][28] <= trellis_path_metric[2][6] + branches[12];
+        trellis_path_metric[3][29] <= trellis_path_metric[2][6] + branches[13];
+        trellis_path_metric[3][30] <= trellis_path_metric[2][7] + branches[14];
+        trellis_path_metric[3][31] <= trellis_path_metric[2][7] + branches[15];
 
     end
         // Trellis code
@@ -709,7 +709,7 @@ module decoder_sys_5(encoded_bits, choose_constraint_length, final_output, clk);
             end
             
             // Giving output
-            final_output = states[(min_trellis / 2)][2];//Stores the leading bit of states[] in final_output
+            final_output = states[(min_trellis / 2)][1];//Stores the leading bit of states[] in final_output
             //It is needed to use two parameters for the 1D array states[] beacause only the leading bit needs to be stored
             
         end//matches with symbol_num >= 19
