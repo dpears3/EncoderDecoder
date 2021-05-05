@@ -188,7 +188,7 @@ module decoder_sys_4(encoded_bits, choose_constraint_length, final_output, clk);
             
             // The following 8 if statements update Path metric based on previous path plus the current branch
             // i=0,1: Updating Min(Path[0], Path[8]), S0 -> S0 better than S4 -> S0
-            if (trellis_path_metric[(symbol_num - 1) % 20][0] < trellis_path_metric[(symbol_num - 1) % 15][8])  begin
+            if (trellis_path_metric[(symbol_num - 1) % 20][0] < trellis_path_metric[(symbol_num - 1) % 20][8])  begin
                 trellis_path_metric[symbol_num % 20][0] = trellis_path_metric[(symbol_num - 1) % 20][0] + branches[0];
                 trellis_path_metric[symbol_num % 20][1] = trellis_path_metric[(symbol_num - 1) % 20][0] + branches[1];
             end
