@@ -337,7 +337,7 @@ module decoder_sys_5(encoded_bits, choose_constraint_length, final_output, clk);
             end
             
                       // i=6,7: S1 -> S3 better than S3 -> S3
-            if (trellis_path_metric[(symbol_num - 1) % 25][4] < trellis_path_metric[(symbol_num - 1) % 25][12])  begin
+            if (trellis_path_metric[(symbol_num - 1) % 25][4] < trellis_path_metric[(symbol_num - 1) % 25][20])  begin
                 trellis_path_metric[symbol_num % 25][8] = trellis_path_metric[(symbol_num - 1) % 25][4] + branches[8];
                 trellis_path_metric[symbol_num % 25][9] = trellis_path_metric[(symbol_num - 1) % 25][4] + branches[9];
             end
@@ -350,7 +350,7 @@ module decoder_sys_5(encoded_bits, choose_constraint_length, final_output, clk);
  
             
                       // i=6,7: S1 -> S3 better than S3 -> S3
-            if (trellis_path_metric[(symbol_num - 1) % 25][5] < trellis_path_metric[(symbol_num - 1) % 25][13])  begin
+            if (trellis_path_metric[(symbol_num - 1) % 25][5] < trellis_path_metric[(symbol_num - 1) % 25][21])  begin
                 trellis_path_metric[symbol_num % 25][10] = trellis_path_metric[(symbol_num - 1) % 25][5] + branches[10];
                 trellis_path_metric[symbol_num % 25][11] = trellis_path_metric[(symbol_num - 1) % 25][5] + branches[11];
             end
@@ -362,7 +362,7 @@ module decoder_sys_5(encoded_bits, choose_constraint_length, final_output, clk);
             end
             
                       // i=6,7: S1 -> S3 better than S3 -> S3
-            if (trellis_path_metric[(symbol_num - 1) % 20][6] < trellis_path_metric[(symbol_num - 1) % 20][14])  begin
+            if (trellis_path_metric[(symbol_num - 1) % 20][6] < trellis_path_metric[(symbol_num - 1) % 20][22])  begin
                 trellis_path_metric[symbol_num % 25][12] = trellis_path_metric[(symbol_num - 1) % 25][6] + branches[12];
                 trellis_path_metric[symbol_num % 25][13] = trellis_path_metric[(symbol_num - 1) % 25][6] + branches[13];
             end
@@ -374,7 +374,7 @@ module decoder_sys_5(encoded_bits, choose_constraint_length, final_output, clk);
             end
             
                       // i=6,7: S1 -> S3 better than S3 -> S3
-            if (trellis_path_metric[(symbol_num - 1) % 25][7] < trellis_path_metric[(symbol_num - 1) % 25][15])  begin
+            if (trellis_path_metric[(symbol_num - 1) % 25][7] < trellis_path_metric[(symbol_num - 1) % 25][23])  begin
                 trellis_path_metric[symbol_num % 25][14] = trellis_path_metric[(symbol_num - 1) % 25][7] + branches[14];
                 trellis_path_metric[symbol_num % 25][15] = trellis_path_metric[(symbol_num - 1) % 25][7] + branches[15];
             end
@@ -385,7 +385,7 @@ module decoder_sys_5(encoded_bits, choose_constraint_length, final_output, clk);
                 trellis_path_metric[symbol_num % 25][15] = trellis_path_metric[(symbol_num - 1) % 25][23] + branches[15];
             end                  
             
-            if (trellis_path_metric[(symbol_num - 1) % 25][8] < trellis_path_metric[(symbol_num - 1) % 25][8])  begin
+            if (trellis_path_metric[(symbol_num - 1) % 25][8] < trellis_path_metric[(symbol_num - 1) % 25][24])  begin
                 trellis_path_metric[symbol_num % 25][16] = trellis_path_metric[(symbol_num - 1) % 25][8] + branches[16];
                 trellis_path_metric[symbol_num % 25][17] = trellis_path_metric[(symbol_num - 1) % 25][8] + branches[17];
             end
@@ -397,7 +397,7 @@ module decoder_sys_5(encoded_bits, choose_constraint_length, final_output, clk);
             end
             
             // i=2,3: S0 -> S1 better than S2 -> S1
-            if (trellis_path_metric[(symbol_num - 1) % 25][9] < trellis_path_metric[(symbol_num - 1) % 25][9])  begin
+            if (trellis_path_metric[(symbol_num - 1) % 25][9] < trellis_path_metric[(symbol_num - 1) % 25][25])  begin
                 trellis_path_metric[symbol_num % 25][18] = trellis_path_metric[(symbol_num - 1) % 25][9] + branches[18];
                 trellis_path_metric[symbol_num % 25][19] = trellis_path_metric[(symbol_num - 1) % 25][9] + branches[19];
             end
@@ -409,7 +409,7 @@ module decoder_sys_5(encoded_bits, choose_constraint_length, final_output, clk);
             end      
 
              // i=4,5: S1 -> S2 better than S3 -> S2
-            if (trellis_path_metric[(symbol_num - 1) % 25][10] < trellis_path_metric[(symbol_num - 1) % 25][10])  begin
+            if (trellis_path_metric[(symbol_num - 1) % 25][10] < trellis_path_metric[(symbol_num - 1) % 25][26])  begin
                 trellis_path_metric[symbol_num % 25][20] = trellis_path_metric[(symbol_num - 1) % 25][10] + branches[20];
                 trellis_path_metric[symbol_num % 25][21] = trellis_path_metric[(symbol_num - 1) % 25][10] + branches[21];
             end
@@ -421,7 +421,7 @@ module decoder_sys_5(encoded_bits, choose_constraint_length, final_output, clk);
             end
             
              // i=6,7: S1 -> S3 better than S3 -> S3
-            if (trellis_path_metric[(symbol_num - 1) % 25][11] < trellis_path_metric[(symbol_num - 1) % 25][11])  begin
+            if (trellis_path_metric[(symbol_num - 1) % 25][11] < trellis_path_metric[(symbol_num - 1) % 25][27])  begin
                 trellis_path_metric[symbol_num % 25][22] = trellis_path_metric[(symbol_num - 1) % 25][11] + branches[22];
                 trellis_path_metric[symbol_num % 25][23] = trellis_path_metric[(symbol_num - 1) % 25][11] + branches[23];
             end
@@ -433,7 +433,7 @@ module decoder_sys_5(encoded_bits, choose_constraint_length, final_output, clk);
             end
             
                       // i=6,7: S1 -> S3 better than S3 -> S3
-            if (trellis_path_metric[(symbol_num - 1) % 25][12] < trellis_path_metric[(symbol_num - 1) % 25][12])  begin
+            if (trellis_path_metric[(symbol_num - 1) % 25][12] < trellis_path_metric[(symbol_num - 1) % 25][28])  begin
                 trellis_path_metric[symbol_num % 25][24] = trellis_path_metric[(symbol_num - 1) % 25][12] + branches[24];
                 trellis_path_metric[symbol_num % 25][25] = trellis_path_metric[(symbol_num - 1) % 25][12] + branches[25];
             end
@@ -446,7 +446,7 @@ module decoder_sys_5(encoded_bits, choose_constraint_length, final_output, clk);
  
             
                       // i=6,7: S1 -> S3 better than S3 -> S3
-            if (trellis_path_metric[(symbol_num - 1) % 25][13] < trellis_path_metric[(symbol_num - 1) % 25][13])  begin
+            if (trellis_path_metric[(symbol_num - 1) % 25][13] < trellis_path_metric[(symbol_num - 1) % 25][29])  begin
                 trellis_path_metric[symbol_num % 25][26] = trellis_path_metric[(symbol_num - 1) % 25][13] + branches[26];
                 trellis_path_metric[symbol_num % 25][27] = trellis_path_metric[(symbol_num - 1) % 25][13] + branches[27];
             end
@@ -458,7 +458,7 @@ module decoder_sys_5(encoded_bits, choose_constraint_length, final_output, clk);
             end
             
                       // i=6,7: S1 -> S3 better than S3 -> S3
-            if (trellis_path_metric[(symbol_num - 1) % 20][14] < trellis_path_metric[(symbol_num - 1) % 20][14])  begin
+            if (trellis_path_metric[(symbol_num - 1) % 20][14] < trellis_path_metric[(symbol_num - 1) % 20][30])  begin
                 trellis_path_metric[symbol_num % 25][28] = trellis_path_metric[(symbol_num - 1) % 25][14] + branches[28];
                 trellis_path_metric[symbol_num % 25][29] = trellis_path_metric[(symbol_num - 1) % 25][14] + branches[29];
             end
@@ -470,7 +470,7 @@ module decoder_sys_5(encoded_bits, choose_constraint_length, final_output, clk);
             end
             
                       // i=6,7: S1 -> S3 better than S3 -> S3
-            if (trellis_path_metric[(symbol_num - 1) % 25][15] < trellis_path_metric[(symbol_num - 1) % 25][15])  begin
+            if (trellis_path_metric[(symbol_num - 1) % 25][15] < trellis_path_metric[(symbol_num - 1) % 25][31])  begin
                 trellis_path_metric[symbol_num % 25][30] = trellis_path_metric[(symbol_num - 1) % 25][15] + branches[30];
                 trellis_path_metric[symbol_num % 25][31] = trellis_path_metric[(symbol_num - 1) % 25][15] + branches[31];
             end
@@ -484,107 +484,198 @@ module decoder_sys_5(encoded_bits, choose_constraint_length, final_output, clk);
     // Calculating the best path for this current state,
     //From lines 221 - 267, seeing at each state what is the best previous path and storing it in best_path
             //S0
-            if (trellis_path_metric[symbol_num % 20][0] < trellis_path_metric[symbol_num % 20][8]) begin
-                best_path[symbol_num % 20][0] = 1'b0;
+            if (trellis_path_metric[symbol_num % 25][0] < trellis_path_metric[symbol_num % 25][16]) begin
+                best_path[symbol_num % 25][0] = 1'b0;
             end
-            else if (trellis_path_metric[symbol_num % 20][0] == trellis_path_metric[symbol_num % 20][8]) begin //for if the previous paths have same value randomly pick where to go back
+            else if (trellis_path_metric[symbol_num % 25][0] == trellis_path_metric[symbol_num % 25][16]) begin //for if the previous paths have same value randomly pick where to go back
                 pkt.randomize();
-                best_path[symbol_num % 20][0] = pkt.random_num;
+                best_path[symbol_num % 25][0] = pkt.random_num;
             end
             else begin
-                best_path[symbol_num % 20][0] = 1'b1;
+                best_path[symbol_num % 25][0] = 1'b1;
             end
             
             // S1
-            if (trellis_path_metric[symbol_num % 20][1] < trellis_path_metric[symbol_num % 20][9]) begin
-                best_path[symbol_num % 20][1] = 1'b0;
+            if (trellis_path_metric[symbol_num % 25][1] < trellis_path_metric[symbol_num % 25][17]) begin
+                best_path[symbol_num % 25][1] = 1'b0;
             end
-            else if (trellis_path_metric[symbol_num % 20][1] == trellis_path_metric[symbol_num % 20][9]) begin
+            else if (trellis_path_metric[symbol_num % 25][1] == trellis_path_metric[symbol_num % 25][17]) begin
                 pkt.randomize();
-                best_path[symbol_num % 20][1] = pkt.random_num;
+                best_path[symbol_num % 25][1] = pkt.random_num;
             end
             else begin
-                best_path[symbol_num % 20][1] = 1'b1;
+                best_path[symbol_num % 25][1] = 1'b1;
             end
             
             // S2
-            if (trellis_path_metric[symbol_num % 20][2] < trellis_path_metric[symbol_num % 20][10]) begin
-                best_path[symbol_num % 20][2] = 1'b0;
+            if (trellis_path_metric[symbol_num % 25][2] < trellis_path_metric[symbol_num % 25][18]) begin
+                best_path[symbol_num % 25][2] = 1'b0;
             end
-            else if (trellis_path_metric[symbol_num % 20][2] == trellis_path_metric[symbol_num % 20][10]) begin
+            else if (trellis_path_metric[symbol_num % 25][2] == trellis_path_metric[symbol_num % 25][18]) begin
                 pkt.randomize();
-                best_path[symbol_num % 20][2] = pkt.random_num;
+                best_path[symbol_num % 25][2] = pkt.random_num;
             end
             else begin
-                best_path[symbol_num % 20][2] = 1'b1;
+                best_path[symbol_num % 25][2] = 1'b1;
             end
             
             // S3
-            if (trellis_path_metric[symbol_num % 20][3] < trellis_path_metric[symbol_num % 20][11]) begin
-                best_path[symbol_num % 20][3] = 1'b0;
+            if (trellis_path_metric[symbol_num % 25][3] < trellis_path_metric[symbol_num % 25][19]) begin
+                best_path[symbol_num % 25][3] = 1'b0;
             end
-            else if (trellis_path_metric[symbol_num % 20][3] == trellis_path_metric[symbol_num % 20][11]) begin
+            else if (trellis_path_metric[symbol_num % 25][3] == trellis_path_metric[symbol_num % 25][19]) begin
                 pkt.randomize();
-                best_path[symbol_num % 20][3] = pkt.random_num;
+                best_path[symbol_num % 25][3] = pkt.random_num;
             end
             else begin
-                best_path[symbol_num % 20][3] = 1'b1;
+                best_path[symbol_num % 25][3] = 1'b1;
             end
              // S4
-            if (trellis_path_metric[symbol_num % 20][4] < trellis_path_metric[symbol_num % 20][12]) begin
-                best_path[symbol_num % 20][4] = 1'b0;
+            if (trellis_path_metric[symbol_num % 25][4] < trellis_path_metric[symbol_num % 25][20]) begin
+                best_path[symbol_num % 25][4] = 1'b0;
             end
-            else if (trellis_path_metric[symbol_num % 20][4] == trellis_path_metric[symbol_num % 20][12]) begin
+            else if (trellis_path_metric[symbol_num % 25][4] == trellis_path_metric[symbol_num % 25][20]) begin
                 pkt.randomize();
-                best_path[symbol_num % 20][4] = pkt.random_num;
+                best_path[symbol_num % 25][4] = pkt.random_num;
             end
             else begin
-                best_path[symbol_num % 20][4] = 1'b1;
+                best_path[symbol_num % 25][4] = 1'b1;
             end
             // S5
-            if (trellis_path_metric[symbol_num % 20][5] < trellis_path_metric[symbol_num % 20][13]) begin
-                best_path[symbol_num % 20][5] = 1'b0;
+            if (trellis_path_metric[symbol_num % 25][5] < trellis_path_metric[symbol_num % 25][21]) begin
+                best_path[symbol_num % 25][5] = 1'b0;
             end
-            else if (trellis_path_metric[symbol_num % 20][5] == trellis_path_metric[symbol_num % 20][13]) begin
+            else if (trellis_path_metric[symbol_num % 25][5] == trellis_path_metric[symbol_num % 25][21]) begin
                 pkt.randomize();
-                best_path[symbol_num % 20][5] = pkt.random_num;
+                best_path[symbol_num % 25][5] = pkt.random_num;
             end
             else begin
-                best_path[symbol_num % 20][5] = 1'b1;
+                best_path[symbol_num % 25][5] = 1'b1;
             end
            // S6
-            if (trellis_path_metric[symbol_num % 20][6] < trellis_path_metric[symbol_num % 20][14]) begin
-                best_path[symbol_num % 20][6] = 1'b0;
+            if (trellis_path_metric[symbol_num % 25][6] < trellis_path_metric[symbol_num % 25][22]) begin
+                best_path[symbol_num % 25][6] = 1'b0;
             end
-            else if (trellis_path_metric[symbol_num % 20][6] == trellis_path_metric[symbol_num % 20][14]) begin
+            else if (trellis_path_metric[symbol_num % 25][6] == trellis_path_metric[symbol_num % 25][22]) begin
                 pkt.randomize();
-                best_path[symbol_num % 20][6] = pkt.random_num;
+                best_path[symbol_num % 25][6] = pkt.random_num;
             end
             else begin
-                best_path[symbol_num % 20][6] = 1'b1;
+                best_path[symbol_num % 25][6] = 1'b1;
             end
             // S7
-            if (trellis_path_metric[symbol_num % 20][7] < trellis_path_metric[symbol_num % 20][15]) begin
-                best_path[symbol_num % 20][7] = 1'b0;
+            if (trellis_path_metric[symbol_num % 25][7] < trellis_path_metric[symbol_num % 25][23]) begin
+                best_path[symbol_num % 25][7] = 1'b0;
             end
-            else if (trellis_path_metric[symbol_num % 20][7] == trellis_path_metric[symbol_num % 20][15]) begin
+            else if (trellis_path_metric[symbol_num % 25][7] == trellis_path_metric[symbol_num % 25][23]) begin
                 pkt.randomize();
-                best_path[symbol_num % 20][7] = pkt.random_num;
+                best_path[symbol_num % 25][7] = pkt.random_num;
             end
             else begin
-                best_path[symbol_num % 20][7] = 1'b1;
+                best_path[symbol_num % 25][7] = 1'b1;
+            end
+            
+            if (trellis_path_metric[symbol_num % 25][8] < trellis_path_metric[symbol_num % 25][24]) begin
+                best_path[symbol_num % 25][8] = 1'b0;
+            end
+            else if (trellis_path_metric[symbol_num % 25][8] == trellis_path_metric[symbol_num % 25][24]) begin //for if the previous paths have same value randomly pick where to go back
+                pkt.randomize();
+                best_path[symbol_num % 25][8] = pkt.random_num;
+            end
+            else begin
+                best_path[symbol_num % 25][8] = 1'b1;
+            end
+            
+            // S1
+            if (trellis_path_metric[symbol_num % 25][9] < trellis_path_metric[symbol_num % 25][25]) begin
+                best_path[symbol_num % 25][9] = 1'b0;
+            end
+            else if (trellis_path_metric[symbol_num % 25][9] == trellis_path_metric[symbol_num % 25][25]) begin
+                pkt.randomize();
+                best_path[symbol_num % 25][9] = pkt.random_num;
+            end
+            else begin
+                best_path[symbol_num % 25][9] = 1'b1;
+            end
+            
+            // S2
+            if (trellis_path_metric[symbol_num % 25][10] < trellis_path_metric[symbol_num % 25][26]) begin
+                best_path[symbol_num % 25][10] = 1'b0;
+            end
+            else if (trellis_path_metric[symbol_num % 25][10] == trellis_path_metric[symbol_num % 25][26]) begin
+                pkt.randomize();
+                best_path[symbol_num % 25][10] = pkt.random_num;
+            end
+            else begin
+                best_path[symbol_num % 25][10] = 1'b1;
+            end
+            
+            // S3
+            if (trellis_path_metric[symbol_num % 25][11] < trellis_path_metric[symbol_num % 25][27]) begin
+                best_path[symbol_num % 25][11] = 1'b0;
+            end
+            else if (trellis_path_metric[symbol_num % 25][11] == trellis_path_metric[symbol_num % 25][27]) begin
+                pkt.randomize();
+                best_path[symbol_num % 25][11] = pkt.random_num;
+            end
+            else begin
+                best_path[symbol_num % 25][11] = 1'b1;
+            end
+             // S4
+            if (trellis_path_metric[symbol_num % 25][12] < trellis_path_metric[symbol_num % 25][28]) begin
+                best_path[symbol_num % 25][12] = 1'b0;
+            end
+            else if (trellis_path_metric[symbol_num % 25][12] == trellis_path_metric[symbol_num % 25][28]) begin
+                pkt.randomize();
+                best_path[symbol_num % 25][12] = pkt.random_num;
+            end
+            else begin
+                best_path[symbol_num % 25][12] = 1'b1;
+            end
+            // S5
+            if (trellis_path_metric[symbol_num % 25][13] < trellis_path_metric[symbol_num % 25][29]) begin
+                best_path[symbol_num % 25][13] = 1'b0;
+            end
+            else if (trellis_path_metric[symbol_num % 25][13] == trellis_path_metric[symbol_num % 25][29]) begin
+                pkt.randomize();
+                best_path[symbol_num % 25][13] = pkt.random_num;
+            end
+            else begin
+                best_path[symbol_num % 25][13] = 1'b1;
+            end
+           // S6
+            if (trellis_path_metric[symbol_num % 25][14] < trellis_path_metric[symbol_num % 25][30]) begin
+                best_path[symbol_num % 25][14] = 1'b0;
+            end
+            else if (trellis_path_metric[symbol_num % 25][14] == trellis_path_metric[symbol_num % 25][30]) begin
+                pkt.randomize();
+                best_path[symbol_num % 25][14] = pkt.random_num;
+            end
+            else begin
+                best_path[symbol_num % 25][14] = 1'b1;
+            end
+            // S7
+            if (trellis_path_metric[symbol_num % 25][15] < trellis_path_metric[symbol_num % 25][31]) begin
+                best_path[symbol_num % 25][15] = 1'b0;
+            end
+            else if (trellis_path_metric[symbol_num % 25][15] == trellis_path_metric[symbol_num % 25][31]) begin
+                pkt.randomize();
+                best_path[symbol_num % 25][15] = pkt.random_num;
+            end
+            else begin
+                best_path[symbol_num % 25][15] = 1'b1;
             end
        
         end// matches with symbol_num >=3
         
   // Picking an output
-        if (symbol_num >= 19) begin
+        if (symbol_num >= 24) begin
             
             // Traceback, which is the best ending path metric?
-            trace_index = (symbol_num) % 20;
+            trace_index = (symbol_num) % 25;
             min_trellis = 0;
             //What is the best path at the last time t
-            for (int i = 0; i < 16; i++) begin
+            for (int i = 0; i < 32; i++) begin
                 if (trellis_path_metric[trace_index][min_trellis] > trellis_path_metric[trace_index][i]) begin
                     min_trellis = i;
                 end
@@ -598,10 +689,10 @@ module decoder_sys_5(encoded_bits, choose_constraint_length, final_output, clk);
             
 
             // Now need to go from that path backwards
-            for (int i = 1; i < 18; i = i + 1) begin
+            for (int i = 1; i < 23; i = i + 1) begin
                 
                 // trellis_connection and best_path tells us the previous state
-                trace_index = (symbol_num - i) % 20;
+                trace_index = (symbol_num - i) % 25;
                 origin_index = min_trellis / 2;
                 // if min_trellis == 14 or 15 the state is 7
                 // if min_trellis == 12 or 13 the state is 6
