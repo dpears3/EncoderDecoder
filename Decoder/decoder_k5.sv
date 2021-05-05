@@ -56,7 +56,7 @@ module decoder_sys_5(encoded_bits, choose_constraint_length, final_output, clk);
     reg best_path [0:24][0:15]; // a 1 corresponds to S2 or S3 and a 0 corresponds to S0 or S1
     
     // How the states are described
-    reg [3:0] states [0:7] = {4'b0000, 4'b1000, 4'b0100, 4'b1100, 4'b0010, 4'b1010, 4'b0110, 4'b1110, 4'b0001, 4'b1001, 4'b0101, 4'b1101,4'b0011, 4'b1011, 4'b0111, 4'b1111};
+    reg [3:0] states [0:15] = {4'b0000, 4'b1000, 4'b0100, 4'b1100, 4'b0010, 4'b1010, 4'b0110, 4'b1110, 4'b0001, 4'b1001, 4'b0101, 4'b1101,4'b0011, 4'b1011, 4'b0111, 4'b1111};
     
     logic [1:0] given_input_next_output [0:31] = {2'b00, 2'b11, 2'b10, 2'b01, 
                                                   2'b10, 2'b01, 2'b00, 2'b11, 
@@ -83,8 +83,8 @@ module decoder_sys_5(encoded_bits, choose_constraint_length, final_output, clk);
         if (symbol_num == 0) begin// time t = 0
             branches[0] <= (encoded_bits ^ given_input_next_output[0]);
             branches[1] <= (encoded_bits ^ given_input_next_output[1]);
-            branches[0] <= branches[0][1] + branches[0][0];
-            branches[1] <= branches[1][1] + branches[1][0];
+//            branches[0] <= branches[0][1] + branches[0][0];
+//            branches[1] <= branches[1][1] + branches[1][0];
             trellis_branch_metric[0][0] <= branches[0];
             trellis_branch_metric[0][1] <= branches[1];
             trellis_path_metric[0][0] <= branches[0];
@@ -99,10 +99,10 @@ module decoder_sys_5(encoded_bits, choose_constraint_length, final_output, clk);
             branches[3] <= (encoded_bits ^ given_input_next_output[3]);
             
             // Calculating the number of errors for the 4 branches
-            branches[0] <= {branches[0][1] + branches[0][0]};
-            branches[1] <= {branches[1][1] + branches[1][0]};
-            branches[2] <= {branches[2][1] + branches[2][0]};
-            branches[3] <= {branches[3][1] + branches[3][0]};
+//            branches[0] <= {branches[0][1] + branches[0][0]};
+//            branches[1] <= {branches[1][1] + branches[1][0]};
+//            branches[2] <= {branches[2][1] + branches[2][0]};
+//            branches[3] <= {branches[3][1] + branches[3][0]};
             
             // Storing branches
             trellis_branch_metric[1][0] <= branches[0];
@@ -138,14 +138,14 @@ module decoder_sys_5(encoded_bits, choose_constraint_length, final_output, clk);
         branches[7] <= (encoded_bits ^ given_input_next_output[7]);
         
         // Calculating the number of errors for the 8 branches
-        branches[0] <= branches[0][1] + branches[0][0];
-        branches[1] <= branches[1][1] + branches[1][0];
-        branches[2] <= branches[2][1] + branches[2][0];
-        branches[3] <= branches[3][1] + branches[3][0];
-        branches[4] <= branches[4][1] + branches[4][0];
-        branches[5] <= branches[5][1] + branches[5][0];
-        branches[6] <= branches[6][1] + branches[6][0];
-        branches[7] <= branches[7][1] + branches[7][0];
+//        branches[0] <= branches[0][1] + branches[0][0];
+//        branches[1] <= branches[1][1] + branches[1][0];
+//        branches[2] <= branches[2][1] + branches[2][0];
+//        branches[3] <= branches[3][1] + branches[3][0];
+//        branches[4] <= branches[4][1] + branches[4][0];
+//        branches[5] <= branches[5][1] + branches[5][0];
+//        branches[6] <= branches[6][1] + branches[6][0];
+//        branches[7] <= branches[7][1] + branches[7][0];
         
         // Storing branches
         trellis_branch_metric[2][0] <= branches[0];
@@ -199,22 +199,22 @@ module decoder_sys_5(encoded_bits, choose_constraint_length, final_output, clk);
         branches[15] <= (encoded_bits ^ given_input_next_output[15]);
         
         // Calculating the number of errors for the 8 branches
-        branches[0] <= branches[0][1] + branches[0][0];
-        branches[1] <= branches[1][1] + branches[1][0];
-        branches[2] <= branches[2][1] + branches[2][0];
-        branches[3] <= branches[3][1] + branches[3][0];
-        branches[4] <= branches[4][1] + branches[4][0];
-        branches[5] <= branches[5][1] + branches[5][0];
-        branches[6] <= branches[6][1] + branches[6][0];
-        branches[7] <= branches[7][1] + branches[7][0];
-        branches[8] <= branches[8][1] + branches[8][0];
-        branches[9] <= branches[9][1] + branches[9][0];
-        branches[10] <= branches[10][1] + branches[10][0];
-        branches[11] <= branches[11][1] + branches[11][0];
-        branches[12] <= branches[12][1] + branches[12][0];
-        branches[13] <= branches[13][1] + branches[13][0];
-        branches[14] <= branches[14][1] + branches[14][0];
-        branches[15] <= branches[15][1] + branches[15][0];
+//        branches[0] <= branches[0][1] + branches[0][0];
+//        branches[1] <= branches[1][1] + branches[1][0];
+//        branches[2] <= branches[2][1] + branches[2][0];
+//        branches[3] <= branches[3][1] + branches[3][0];
+//        branches[4] <= branches[4][1] + branches[4][0];
+//        branches[5] <= branches[5][1] + branches[5][0];
+//        branches[6] <= branches[6][1] + branches[6][0];
+//        branches[7] <= branches[7][1] + branches[7][0];
+//        branches[8] <= branches[8][1] + branches[8][0];
+//        branches[9] <= branches[9][1] + branches[9][0];
+//        branches[10] <= branches[10][1] + branches[10][0];
+//        branches[11] <= branches[11][1] + branches[11][0];
+//        branches[12] <= branches[12][1] + branches[12][0];
+//        branches[13] <= branches[13][1] + branches[13][0];
+//        branches[14] <= branches[14][1] + branches[14][0];
+//        branches[15] <= branches[15][1] + branches[15][0];
         
         // Storing branches
         trellis_branch_metric[2][0] <= branches[0];
@@ -281,7 +281,7 @@ module decoder_sys_5(encoded_bits, choose_constraint_length, final_output, clk);
             branches[i] <= encoded_bits ^ given_input_next_output[i]; //XORing branch like in previous iterations
             
             // Calculating Error
-            branches[i] <= (branches[i][1] + branches[i][0]); //XORing branch like in previous iterations
+            //branches[i] <= (branches[i][1] + branches[i][0]); //XORing branch like in previous iterations
             
             // Storing into branch metric
             trellis_branch_metric[symbol_num % 25][i] <= branches[i];
