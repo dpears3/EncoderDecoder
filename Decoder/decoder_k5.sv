@@ -167,14 +167,14 @@ module decoder_sys_5(encoded_bits, choose_constraint_length, final_output, clk);
         trellis_path_metric[2][6] <= trellis_path_metric[1][3] + branches[6];
         trellis_path_metric[2][7] <= trellis_path_metric[1][3] + branches[7];
         
-        trellis_path_metric[2][8] <= trellis_path_metric[1][4] + branches[0];
-        trellis_path_metric[2][9] <= trellis_path_metric[1][4] + branches[1];
-        trellis_path_metric[2][10] <= trellis_path_metric[1][5] + branches[2];
-        trellis_path_metric[2][11] <= trellis_path_metric[1][5] + branches[3];
-        trellis_path_metric[2][12] <= trellis_path_metric[1][6] + branches[4];
-        trellis_path_metric[2][13] <= trellis_path_metric[1][6] + branches[5];
-        trellis_path_metric[2][14] <= trellis_path_metric[1][7] + branches[6];
-        trellis_path_metric[2][15] <= trellis_path_metric[1][7] + branches[7];
+         trellis_path_metric[2][8] <= trellis_path_metric[1][0] + branches[0];
+         trellis_path_metric[2][9] <= trellis_path_metric[1][0] + branches[1];
+         trellis_path_metric[2][10] <= trellis_path_metric[1][1] + branches[2];
+         trellis_path_metric[2][11] <= trellis_path_metric[1][1] + branches[3];
+         trellis_path_metric[2][12] <= trellis_path_metric[1][2] + branches[4];
+         trellis_path_metric[2][13] <= trellis_path_metric[1][2] + branches[5];
+         trellis_path_metric[2][14] <= trellis_path_metric[1][3] + branches[6];
+         trellis_path_metric[2][15] <= trellis_path_metric[1][3] + branches[7];
 
     end
     
