@@ -666,7 +666,7 @@ module decoder_sys_5(encoded_bits, choose_constraint_length, final_output, clk);
                 best_path[symbol_num % 25][15] = 1'b1;
             end
        
-        end// matches with symbol_num >=3
+        end// matches with symbol_num >=4
         
   // Picking an output
         if (symbol_num >= 24) begin
