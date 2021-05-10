@@ -362,7 +362,7 @@ module decoder_sys_5(encoded_bits, choose_constraint_length, final_output, clk);
             end
             
                       // i=6,7: S1 -> S3 better than S3 -> S3
-            if (trellis_path_metric[(symbol_num - 1) % 20][6] < trellis_path_metric[(symbol_num - 1) % 20][22])  begin
+            if (trellis_path_metric[(symbol_num - 1) % 25][6] < trellis_path_metric[(symbol_num - 1) % 25][22])  begin
                 trellis_path_metric[symbol_num % 25][12] = trellis_path_metric[(symbol_num - 1) % 25][6] + branches[12];
                 trellis_path_metric[symbol_num % 25][13] = trellis_path_metric[(symbol_num - 1) % 25][6] + branches[13];
             end
@@ -458,7 +458,7 @@ module decoder_sys_5(encoded_bits, choose_constraint_length, final_output, clk);
             end
             
                       // i=6,7: S1 -> S3 better than S3 -> S3
-            if (trellis_path_metric[(symbol_num - 1) % 20][14] < trellis_path_metric[(symbol_num - 1) % 20][30])  begin
+            if (trellis_path_metric[(symbol_num - 1) % 25][14] < trellis_path_metric[(symbol_num - 1) % 25][30])  begin
                 trellis_path_metric[symbol_num % 25][28] = trellis_path_metric[(symbol_num - 1) % 25][14] + branches[28];
                 trellis_path_metric[symbol_num % 25][29] = trellis_path_metric[(symbol_num - 1) % 25][14] + branches[29];
             end
@@ -689,7 +689,7 @@ module decoder_sys_5(encoded_bits, choose_constraint_length, final_output, clk);
             
 
             // Now need to go from that path backwards
-            for (int i = 1; i < 23; i = i + 1) begin
+            for (int i = 1; i < 22; i = i + 1) begin
                 
                 // trellis_connection and best_path tells us the previous state
                 trace_index = (symbol_num - i) % 25;
