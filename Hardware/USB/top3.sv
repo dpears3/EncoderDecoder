@@ -21,7 +21,6 @@
 
 /*function void func_out;
     send_ready = 1'b1;
-
 endfunction*/
 
 
@@ -55,7 +54,7 @@ reg [2:0] out;   // Values 3 - 6, assumed here as 3
 
 reg [7:0] bit_counter;
 reg [7:0] byte_counter;
-reg [9:0] out_counter;
+reg [23:0] out_counter;
 
 reg encode_ready;
 
@@ -80,52 +79,66 @@ always @(posedge clk) begin
 
     // Print Data out, push up and then center
     if (up) begin
-       out_counter <= 10'b0000000001;
+       out_counter <= 20'h00001;
 //	   TxD_data <= encode_buffer[7:0];
 //	   encode_buffer <= encode_buffer >> 8;
 	   //TxD_data <= buffer[7:0];
 	   //buffer <= buffer >> 8;
     end
 	
-	if (out_counter > 10'b0000000000) begin
-	   if (out_counter == 10'b0000000001) begin
-	       TxD_data = buffer[7:0];
-	       //buffer <= buffer >> 8;
-	       send_ready <= 1'b0;
-	   end
-	   if (out_counter == 10'b0000000100) begin
-	       send_ready <= 1'b1;
-	   end
-	   if (out_counter == 10'b1111100000) begin
-	       TxD_data = encode_buffer[7:0];
-	       //encode_buffer <= encode_buffer >> 8;
-	       send_ready <= 1'b0;
-	   end
-	   if (out_counter == 10'b1111100100) begin
-	       send_ready <= 1'b1;
-	   end
-	   if (out_counter > 10'b1111100111) begin
-	       out_counter <= 10'b00000;
+	if (out_counter > 0) begin
+	
+	   case (out_counter)
+	       24'h000001: begin TxD_data <= buffer[7:0]; send_ready <= 1'b0; end  
+	       24'h000002: send_ready <= 1'b1;
+	       24'h000004: begin TxD_data <= buffer[15:8]; send_ready <= 1'b0; end
+	       24'h0FFFF1: send_ready <= 1'b1;
+	       24'h0FFFF3: begin TxD_data <= buffer[23:16]; send_ready <= 1'b0; end
+	       24'h1FFFF1: send_ready <= 1'b1;
+	       24'h1FFFF3: begin TxD_data <= buffer[31:24]; send_ready <= 1'b0; end
+	       24'h2FFFF1: send_ready <= 1'b1;
+	       24'h2FFFF3: begin TxD_data <= encode_buffer[7:0]; send_ready <= 1'b0; end
+	       24'h3FFFF1: send_ready <= 1'b1;
+	       24'h3FFFF3: begin TxD_data <= encode_buffer[15:8]; send_ready <= 1'b0; end
+	       24'h4FFFF1: send_ready <= 1'b1;
+	       24'h4FFFF3: begin TxD_data <= encode_buffer[23:16]; send_ready <= 1'b0; end
+	       24'h5FFFF1: send_ready <= 1'b1;
+	       24'h5FFFF3: begin TxD_data <= encode_buffer[31:24]; send_ready <= 1'b0; end
+	       24'h6FFFF1: send_ready <= 1'b1;  
+	       24'h6FFFF3: begin TxD_data <= encode_buffer[39:32]; send_ready <= 1'b0; end
+	       24'h7FFFF1: send_ready <= 1'b1;
+	       24'h7FFFF3: begin TxD_data <= encode_buffer[47:40]; send_ready <= 1'b0; end
+	       24'h8FFFF1: send_ready <= 1'b1;
+	       24'h8FFFF3: begin TxD_data <= encode_buffer[55:48]; send_ready <= 1'b0; end
+	       24'h9FFFF1: send_ready <= 1'b1;
+	       24'h9FFFF3: begin TxD_data <= encode_buffer[63:56]; send_ready <= 1'b0; end
+	       24'hAFFFF1: send_ready <= 1'b1;
+	   endcase
+
+	   if (out_counter > 24'hAFFFF6) begin
+	       out_counter <= 0;
 	       send_ready <= 1'b0;
 	   end
 	   else begin
 	       out_counter <= out_counter + 1'b1;
 	   end
 	end
-	
-	if (counter == 4) begin
-		encode_ready <= 1;
-		counter++;
-	end
-	
-/*	if (encode_ready) begin
-	   unencoded_bit <= buffer[index];
-	   encode_buffer[2*index] <= out[0];
-	   encode_buffer[2*index + 1] <= out[1];
+
+	// Encoding 32 bits
+	if (encode_ready == 1) begin
+           encode_buffer[2*index] <= out[0];
+           encode_buffer[2*index + 1] <= out[1];
+           unencoded_bit <= buffer[index];
 	   if (index >= 31) begin
 	       encode_ready = 0;
 	   end
 	   index++;
+	end
+	
+/*	if (counter == 4) begin
+		encode_ready <= 1;
+		unencoded_bit <= buffer[0];
+		counter++;
 	end*/
 	
 /*	if (byte_counter == 1 || byte_counter == 2 || byte_counter == 3 || byte_counter == 4) begin //Only first byte works still need to figure out shifting
@@ -179,6 +192,8 @@ always @(posedge clk) begin
 		end
 		if (counter == 4) begin 
 			buffer[31:24] <= RxD_data;
+			encode_ready <= 1;
+		    unencoded_bit <= buffer[0];
 		end
 	end
 	
