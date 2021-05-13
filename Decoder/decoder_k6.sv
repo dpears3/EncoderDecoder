@@ -64,17 +64,25 @@ module decoder_sys_6(encoded_bits, choose_constraint_length, final_output, clk);
                                5'b01111, 5'b11111};
     
     
-    logic [1:0] given_input_next_output [0:63] = {2'b00, 2'b11, 2'b10, 2'b01, 
-                                                  2'b10, 2'b01, 2'b00, 2'b11, 
-                                                  2'b10, 2'b01, 2'b11, 2'b00, 
-                                                  2'b11, 2'b00, 2'b01, 2'b10, 
-                                                  2'b11, 2'b00, 2'b01, 2'b10, 
-                                                  2'b01, 2'b10, 2'b11, 2'b00, 
-                                                  2'b10, 2'b01, 2'b00, 2'b11, 
-                                                  2'b00, 2'b11, 2'b10, 2'b01};
-                                                  
-                                                  
-    
+    logic [1:0] given_input_next_output [0:63] = {2'b00, 2'b11, 2'b11, 2'b00,
+                                                2'b01, 2'b10, 2'b10, 2'b01,
+                                                2'b11, 2'b00, 2'b00, 2'b11,
+                                                2'b10, 2'b01, 2'b01, 2'b10,
+                                                2'b01, 2'b10, 2'b10, 2'b01,
+                                                2'b00, 2'b11, 2'b11, 2'b00,
+                                                2'b10, 2'b01, 2'b01, 2'b10,
+                                                2'b11, 2'b00, 2'b00, 2'b11,
+                                                2'b10, 2'b01, 2'b01, 2'b10,
+                                                2'b11, 2'b00, 2'b00, 2'b11, 
+                                                2'b01, 2'b10, 2'b10, 2'b01,
+                                                2'b00, 2'b11, 2'b11, 2'b00,
+                                                2'b11, 2'b00, 2'b00, 2'b11,
+                                                2'b10, 2'b01, 2'b01, 2'b10,
+                                                2'b00, 2'b11, 2'b11, 2'b00,
+                                                2'b01, 2'b10, 2'b10, 2'b01};
+                                                                              
+                                                              
+        
     // Trellis connecting variable, paired with best_path, Destination: Origin
     reg [5:0] trellis_connection [0:63] = {0, 32, 1, 33, 2, 34, 3, 35, 
                                            4, 36, 5, 37, 6, 38, 7, 39,
@@ -953,30 +961,181 @@ module decoder_sys_6(encoded_bits, choose_constraint_length, final_output, clk);
             else begin
                 best_path[symbol_num % 30][15] = 1'b1;
             end
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
              // S16
-            if (trellis_path_metric[symbol_num % 30][15] < trellis_path_metric[symbol_num % 30][47]) begin
-                best_path[symbol_num % 30][15] = 1'b0;
+            if (trellis_path_metric[symbol_num % 30][16] < trellis_path_metric[symbol_num % 30][48]) begin
+                best_path[symbol_num % 30][16] = 1'b0;
             end
-            else if (trellis_path_metric[symbol_num % 30][15] == trellis_path_metric[symbol_num % 30][47]) begin
+            else if (trellis_path_metric[symbol_num % 30][16] == trellis_path_metric[symbol_num % 30][48]) begin
                 pkt.randomize();
-                best_path[symbol_num % 30][15] = pkt.random_num;
+                best_path[symbol_num % 30][16] = pkt.random_num;
             end
             else begin
-                best_path[symbol_num % 30][15] = 1'b1;
+                best_path[symbol_num % 30][16] = 1'b1;
+            end
+            // S17
+            if (trellis_path_metric[symbol_num % 30][17] < trellis_path_metric[symbol_num % 30][49]) begin
+                best_path[symbol_num % 30][17] = 1'b0;
+            end
+            else if (trellis_path_metric[symbol_num % 30][17] == trellis_path_metric[symbol_num % 30][49]) begin
+                pkt.randomize();
+                best_path[symbol_num % 30][17] = pkt.random_num;
+            end
+            else begin
+                best_path[symbol_num % 30][17] = 1'b1;
+            end
+            // S18
+            if (trellis_path_metric[symbol_num % 30][18] < trellis_path_metric[symbol_num % 30][50]) begin
+                best_path[symbol_num % 30][18] = 1'b0;
+            end
+            else if (trellis_path_metric[symbol_num % 30][18] == trellis_path_metric[symbol_num % 30][50]) begin
+                pkt.randomize();
+                best_path[symbol_num % 30][18] = pkt.random_num;
+            end
+            else begin
+                best_path[symbol_num % 30][18] = 1'b1;
+            end
+            // S19
+            if (trellis_path_metric[symbol_num % 30][19] < trellis_path_metric[symbol_num % 30][51]) begin
+                best_path[symbol_num % 30][19] = 1'b0;
+            end
+            else if (trellis_path_metric[symbol_num % 30][19] == trellis_path_metric[symbol_num % 30][51]) begin
+                pkt.randomize();
+                best_path[symbol_num % 30][19] = pkt.random_num;
+            end
+            else begin
+                best_path[symbol_num % 30][19] = 1'b1;
+            end
+            // S20
+            if (trellis_path_metric[symbol_num % 30][20] < trellis_path_metric[symbol_num % 30][52]) begin
+                best_path[symbol_num % 30][20] = 1'b0;
+            end
+            else if (trellis_path_metric[symbol_num % 30][20] == trellis_path_metric[symbol_num % 30][52]) begin
+                pkt.randomize();
+                best_path[symbol_num % 30][20] = pkt.random_num;
+            end
+            else begin
+                best_path[symbol_num % 30][20] = 1'b1;
+            end
+            // S21
+            if (trellis_path_metric[symbol_num % 30][21] < trellis_path_metric[symbol_num % 30][53]) begin
+                best_path[symbol_num % 30][21] = 1'b0;
+            end
+            else if (trellis_path_metric[symbol_num % 30][21] == trellis_path_metric[symbol_num % 30][53]) begin
+                pkt.randomize();
+                best_path[symbol_num % 30][21] = pkt.random_num;
+            end
+            else begin
+                best_path[symbol_num % 30][21] = 1'b1;
+            end
+            // S22
+            if (trellis_path_metric[symbol_num % 30][22] < trellis_path_metric[symbol_num % 30][54]) begin
+                best_path[symbol_num % 30][22] = 1'b0;
+            end
+            else if (trellis_path_metric[symbol_num % 30][22] == trellis_path_metric[symbol_num % 30][54]) begin
+                pkt.randomize();
+                best_path[symbol_num % 30][22] = pkt.random_num;
+            end
+            else begin
+                best_path[symbol_num % 30][22] = 1'b1;
+            end
+            // S23
+            if (trellis_path_metric[symbol_num % 30][23] < trellis_path_metric[symbol_num % 30][55]) begin
+                best_path[symbol_num % 30][23] = 1'b0;
+            end
+            else if (trellis_path_metric[symbol_num % 30][23] == trellis_path_metric[symbol_num % 30][55]) begin
+                pkt.randomize();
+                best_path[symbol_num % 30][23] = pkt.random_num;
+            end
+            else begin
+                best_path[symbol_num % 30][23] = 1'b1;
+            end
+            // S24
+            if (trellis_path_metric[symbol_num % 30][24] < trellis_path_metric[symbol_num % 30][56]) begin
+                best_path[symbol_num % 30][24] = 1'b0;
+            end
+            else if (trellis_path_metric[symbol_num % 30][24] == trellis_path_metric[symbol_num % 30][56]) begin
+                pkt.randomize();
+                best_path[symbol_num % 30][24] = pkt.random_num;
+            end
+            else begin
+                best_path[symbol_num % 30][24] = 1'b1;
+            end
+            // S25
+            if (trellis_path_metric[symbol_num % 30][25] < trellis_path_metric[symbol_num % 30][57]) begin
+                best_path[symbol_num % 30][25] = 1'b0;
+            end
+            else if (trellis_path_metric[symbol_num % 30][25] == trellis_path_metric[symbol_num % 30][57]) begin
+                pkt.randomize();
+                best_path[symbol_num % 30][25] = pkt.random_num;
+            end
+            else begin
+                best_path[symbol_num % 30][25] = 1'b1;
+            end
+            // S26
+            if (trellis_path_metric[symbol_num % 30][26] < trellis_path_metric[symbol_num % 30][58]) begin
+                best_path[symbol_num % 30][26] = 1'b0;
+            end
+            else if (trellis_path_metric[symbol_num % 30][26] == trellis_path_metric[symbol_num % 30][58]) begin
+                pkt.randomize();
+                best_path[symbol_num % 30][26] = pkt.random_num;
+            end
+            else begin
+                best_path[symbol_num % 30][26] = 1'b1;
+            end
+            // S27
+            if (trellis_path_metric[symbol_num % 30][27] < trellis_path_metric[symbol_num % 30][59]) begin
+                best_path[symbol_num % 30][27] = 1'b0;
+            end
+            else if (trellis_path_metric[symbol_num % 30][27] == trellis_path_metric[symbol_num % 30][59]) begin
+                pkt.randomize();
+                best_path[symbol_num % 30][27] = pkt.random_num;
+            end
+            else begin
+                best_path[symbol_num % 30][27] = 1'b1;
+            end
+            // S28
+            if (trellis_path_metric[symbol_num % 30][28] < trellis_path_metric[symbol_num % 30][60]) begin
+                best_path[symbol_num % 30][28] = 1'b0;
+            end
+            else if (trellis_path_metric[symbol_num % 30][28] == trellis_path_metric[symbol_num % 30][60]) begin
+                pkt.randomize();
+                best_path[symbol_num % 30][28] = pkt.random_num;
+            end
+            else begin
+                best_path[symbol_num % 30][28] = 1'b1;
+            end
+            // S29
+            if (trellis_path_metric[symbol_num % 30][29] < trellis_path_metric[symbol_num % 30][61]) begin
+                best_path[symbol_num % 30][29] = 1'b0;
+            end
+            else if (trellis_path_metric[symbol_num % 30][29] == trellis_path_metric[symbol_num % 30][61]) begin
+                pkt.randomize();
+                best_path[symbol_num % 30][29] = pkt.random_num;
+            end
+            else begin
+                best_path[symbol_num % 30][29] = 1'b1;
+            end
+            // S30
+            if (trellis_path_metric[symbol_num % 30][30] < trellis_path_metric[symbol_num % 30][62]) begin
+                best_path[symbol_num % 30][30] = 1'b0;
+            end
+            else if (trellis_path_metric[symbol_num % 30][30] == trellis_path_metric[symbol_num % 30][62]) begin
+                pkt.randomize();
+                best_path[symbol_num % 30][30] = pkt.random_num;
+            end
+            else begin
+                best_path[symbol_num % 30][30] = 1'b1;
+            end
+            // S31
+            if (trellis_path_metric[symbol_num % 30][31] < trellis_path_metric[symbol_num % 30][63]) begin
+                best_path[symbol_num % 30][31] = 1'b0;
+            end
+            else if (trellis_path_metric[symbol_num % 30][31] == trellis_path_metric[symbol_num % 30][63]) begin
+                pkt.randomize();
+                best_path[symbol_num % 30][31] = pkt.random_num;
+            end
+            else begin
+                best_path[symbol_num % 30][31] = 1'b1;
             end
         end// matches with symbol_num >=5
         
