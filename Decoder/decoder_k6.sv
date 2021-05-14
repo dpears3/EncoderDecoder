@@ -45,8 +45,8 @@ module decoder_sys_6(encoded_bits, choose_constraint_length, final_output, clk);
     // Memory
     
     // Trellis MEMORY
-    reg [4:0] trellis_path_metric [0:29][0:63];  // 2D array 5 bit data, rows = 30, col = 64
-    reg [4:0] trellis_branch_metric [0:29][0:63]; // 2D array 2 bit data, rows = 30, col = 64
+    reg [5:0] trellis_path_metric [0:29][0:63];  // 2D array 5 bit data, rows = 30, col = 64
+    reg [5:0] trellis_branch_metric [0:29][0:63]; // 2D array 2 bit data, rows = 30, col = 64
     
     
     // Trellis optimum Branches
@@ -56,7 +56,7 @@ module decoder_sys_6(encoded_bits, choose_constraint_length, final_output, clk);
     reg best_path [0:29][0:31]; // a 1 corresponds to S2 or S3 and a 0 corresponds to S0 or S1
     
     // How the states are described
-    reg [3:0] states [0:31] = {5'b00000, 5'b10000, 5'b01000, 5'b11000, 5'b00100, 5'b10100,
+    reg [4:0] states [0:31] = {5'b00000, 5'b10000, 5'b01000, 5'b11000, 5'b00100, 5'b10100,
                                5'b01100, 5'b11100, 5'b00010, 5'b10010, 5'b01010, 5'b11010,
                                5'b00110, 5'b10110, 5'b01110, 5'b11110, 5'b00001, 5'b10001,
                                5'b01001, 5'b11001, 5'b00101, 5'b10101, 5'b01101, 5'b11101,
