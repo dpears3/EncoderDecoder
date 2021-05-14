@@ -50,7 +50,7 @@ module decoder_sys_5(encoded_bits, choose_constraint_length, final_output, clk);
     
     
     // Trellis optimum Branches
-    logic [3:0] branches[0:31] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}; //Just a short version of trellis_branch_metric used for quick calculations at each time t
+    logic [4:0] branches[0:31] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}; //Just a short version of trellis_branch_metric used for quick calculations at each time t
     //logic is the same thing as reg
     // Branch 1 or 0 was the min? Useful for traceback
     reg best_path [0:24][0:15]; // a 1 corresponds to S2 or S3 and a 0 corresponds to S0 or S1
