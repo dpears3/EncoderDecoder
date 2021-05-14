@@ -23,13 +23,13 @@
 module sim_encoder();
 
     // Inputs
-    reg unencoded_bits, clk, choose_constraint_length;
+    reg unencoded_bit, clk, choose_constraint_length;
     
     // Outputs
     wire [1:0] out;
     
     // Instatiating
-    encoder uut(.unencoded_bits(unencoded_bits), .clk(clk), .choose_constraint_length(choose_constraint_length), .out(out));
+    encoder uut(.unencoded_bit(unencoded_bit), .clk(clk), .choose_constraint_length(choose_constraint_length), .out(out));
  
     // File handler
     integer input_file;
@@ -45,7 +45,7 @@ module sim_encoder();
 
     always @(posedge clk) begin
         xx_remove = 0;
-        scan_file = $fscanf(input_file, "%d ", unencoded_bits); 
+        scan_file = $fscanf(input_file, "%d ", unencoded_bit); 
         if (!$feof(input_file)) begin
             //loading each line into unencoded bits
         end
@@ -54,7 +54,7 @@ module sim_encoder();
     initial begin
     
         // Prevent XX
-        unencoded_bits = 0;
+        unencoded_bit = 0;
         xx_remove = 1;
         
         // Setup File Load as read
