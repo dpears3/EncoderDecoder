@@ -19,12 +19,17 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
+/*function void func_out;
+    send_ready = 1'b1;
+endfunction*/
 
-module top(UART_TXD_IN, UART_RXD_OUT, BTNC, BTNU, BTND, clk);
+
+module top(UART_TXD_IN, UART_RXD_OUT, BTNC, BTNU, BTND, clk, SW);
 
 // Inputs and outputs
 input BTNC, BTNU, BTND, clk;
 input UART_TXD_IN;
+input [15:0] SW;
 output UART_RXD_OUT;
 
 // Data to transmit 8 bits at a time
@@ -38,53 +43,241 @@ wire error_out;
 wire [2:0] error_loc;
 wire RxD_data_ready;
 wire [7:0] RxD_data; // Recieved data
-reg [7:0] counter;
-reg [31:0] buffer;
+reg [7:0] counter = 0;
+reg [7:0] bit_number;
 
-wire [1:0] encoded_bits;               // 2 Bits received 
-wire [2:0] choose_constraint_length;   // Values 3 - 6, assumed here as 3
+reg [0:63] buffer;
+reg [0:63] encode_buffer;
+reg [0:31] decode_buffer;
+//reg data_send_ready;
+//reg [7:0] send_counter;
 
-//decoder_sys decoder_s(.encoded_bits(data_in), .choose_constraint_length(3'b011), .final_output(data_out), .clk(clk));
-encoder_sys encoder(.unencoded_bits(unencoded_bit), .clk(clk), .choose_constraint_length(choose_constraint_length), .out(out))
+reg unencoded_bit;               // 1 Bit received 
+reg [1:0] encoder_out;
+reg [1:0] decoder_in;
+reg decoder_out;
+
+//reg [7:0] bit_counter;
+//reg [7:0] byte_counter;
+reg [23:0] out_counter;
+
+reg encode_ready;
+
+reg [7:0] index;
+reg [7:0] decode_index;
+
+reg send_data;
+reg send_ready;
+reg remove_zero;
+reg dec_remove_zero;
+reg decode_start;
+reg decoder_data_ready;
+reg start_var;
+
+reg reset;
+
+reg [1:0] shift_reg_k3 = 0; //register
+reg [4:0] shift_reg_k6 = 0;
+reg [0:31] cycle_out = 64'h1000000000000000;
+integer symbol_num;
+integer prev_symbol = 14;
+
+decoder_k3 decoder_sys(.buffer_in(buffer), .choose_constraint_length(3'b011), .final_output(decoder_out), .clk(clk), .start(start_var), .ready(decoder_data_ready), .buffer_out(decode_buffer), .reset(reset));
+//hw_decoder_k6 decoder_sys(.buffer_in(buffer), .choose_constraint_length(3'b011), .final_output(decoder_out), .clk(clk), .start(start_var), .ready(decoder_data_ready), .buffer_out(decode_buffer));
+encoder_k3 encoder_sys(.unencoded_bit(unencoded_bit), .clk(clk), .choose_constraint_length(choose_constraint_length), .out(encoder_out), .rst(rst));
 Debounce_Top center_deb(.clk(clk), .data_in(BTNC), .data_out(center));
 Debounce_Top up_deb(.clk(clk), .data_in(BTNU), .data_out(up));
 Debounce_Top down_deb(.clk(clk), .data_in(BTND), .data_out(down));
-Debounce_Top left_deb(.clk(clk), .data_in(BTNL), .data_out(left));
 async_receiver RX(.clk(clk), .RxD(UART_TXD_IN), .RxD_data_ready(RxD_data_ready), .RxD_data(RxD_data));
-async_transmitter TX(.clk(clk), .TxD(UART_RXD_OUT), .TxD_start(center), .TxD_data(TxD_data)); // Center button sends buffer back
+async_transmitter TX(.clk(clk), .TxD(UART_RXD_OUT), .TxD_start(send_ready), .TxD_data(TxD_data)); // sends buffer back when ready
 
+//logic [4:0] array_data [0:14][0:7];
 
 //// Module Code ////
 always @(posedge clk) begin
 
-    // Print Data out
+    // Print out
     if (up) begin
-        //TxD_data <= RxD_data;
-		//TxD_data <= counter;
-		TxD_data <= buffer[7:0];
-		buffer <= buffer >> 8;
+       out_counter <= 20'h00001;
     end
 	
-	if (down) begin
-		counter <= 0;
+	if (out_counter > 0) begin
+	
+	if (SW[0] == 0) begin
+	   case (out_counter)
+	       24'h000001: begin send_ready <= 1'b0; end  
+	       //24'h000001: begin TxD_data <= buffer[0:7]; send_ready <= 1'b0; end  
+	       //24'h000002: send_ready <= 1'b1;
+	       //24'h000004: begin TxD_data <= buffer[8:15]; send_ready <= 1'b0; end
+	       //24'h0FFFF1: send_ready <= 1'b1;
+	       //24'h0FFFF3: begin TxD_data <= buffer[16:23]; send_ready <= 1'b0; end
+	       //24'h1FFFF1: send_ready <= 1'b1;
+	       //24'h1FFFF3: begin TxD_data <= buffer[24:31]; send_ready <= 1'b0; end
+	       //24'h2FFFF1: send_ready <= 1'b1;
+	       24'h2FFFF3: begin TxD_data <= encode_buffer[0:7]; send_ready <= 1'b0; end
+	       24'h3FFFF1: send_ready <= 1'b1;
+	       24'h3FFFF3: begin TxD_data <= encode_buffer[8:15]; send_ready <= 1'b0; end
+	       24'h4FFFF1: send_ready <= 1'b1;
+	       24'h4FFFF3: begin TxD_data <= encode_buffer[16:23]; send_ready <= 1'b0; end
+	       24'h5FFFF1: send_ready <= 1'b1;
+	       24'h5FFFF3: begin TxD_data <= encode_buffer[24:31]; send_ready <= 1'b0; end
+	       24'h6FFFF1: send_ready <= 1'b1;  
+	       24'h6FFFF3: begin TxD_data <= encode_buffer[32:39]; send_ready <= 1'b0; end
+	       24'h7FFFF1: send_ready <= 1'b1;
+	       24'h7FFFF3: begin TxD_data <= encode_buffer[40:47]; send_ready <= 1'b0; end
+	       24'h8FFFF1: send_ready <= 1'b1;
+	       24'h8FFFF3: begin TxD_data <= encode_buffer[48:55]; send_ready <= 1'b0; end
+	       24'h9FFFF1: send_ready <= 1'b1;
+	       24'h9FFFF3: begin TxD_data <= encode_buffer[56:63]; send_ready <= 1'b0; end
+	       24'hAFFFF1: send_ready <= 1'b1;
+	   endcase
+    end
+    
+    else begin
+	   
+	   case (out_counter)
+	       24'h000001: begin send_ready <= 1'b0; end  
+           //24'h000001: begin TxD_data <= buffer[0:7]; send_ready <= 1'b0; end  
+	       //24'h000002: send_ready <= 1'b1;
+	       //24'h000004: begin TxD_data <= buffer[8:15]; send_ready <= 1'b0; end
+	       //24'h0FFFF1: send_ready <= 1'b1;
+	       //24'h0FFFF3: begin TxD_data <= buffer[16:23]; send_ready <= 1'b0; end
+	       //24'h1FFFF1: send_ready <= 1'b1;
+	       //24'h1FFFF3: begin TxD_data <= buffer[24:31]; send_ready <= 1'b0; end
+	       //24'h2FFFF1: send_ready <= 1'b1;
+	       //24'h2FFFF3: begin TxD_data <= buffer[32:39]; send_ready <= 1'b0; end
+	       //24'h3FFFF1: send_ready <= 1'b1;
+	       //24'h3FFFF3: begin TxD_data <= buffer[40:47]; send_ready <= 1'b0; end
+	       //24'h4FFFF1: send_ready <= 1'b1;
+	       //24'h4FFFF3: begin TxD_data <= buffer[48:55]; send_ready <= 1'b0; end
+	       //24'h5FFFF1: send_ready <= 1'b1;
+	       //24'h5FFFF3: begin TxD_data <= buffer[56:63]; send_ready <= 1'b0; end
+	       //24'h6FFFF1: send_ready <= 1'b1;  
+	       24'h6FFFF3: begin TxD_data <= decode_buffer[0:7]; send_ready <= 1'b0; end
+	       24'h7FFFF1: send_ready <= 1'b1;
+	       24'h7FFFF3: begin TxD_data <= decode_buffer[8:15]; send_ready <= 1'b0; end
+	       24'h8FFFF1: send_ready <= 1'b1;
+	       24'h8FFFF3: begin TxD_data <= decode_buffer[16:23]; send_ready <= 1'b0; end
+	       24'h9FFFF1: send_ready <= 1'b1;
+	       24'h9FFFF3: begin TxD_data <= decode_buffer[24:31]; send_ready <= 1'b0; end
+	       24'hAFFFF1: send_ready <= 1'b1; 
+	   endcase
+	   
+    end
+    
+	   if (out_counter > 24'hAFFFF6) begin
+	       out_counter <= 0;
+	       send_ready <= 1'b0;
+	   end
+	   else begin
+	       out_counter <= out_counter + 1'b1;
+	   end
+	end
+
+	// Encoding 32 bits
+	if (encode_ready == 1 && index < 33) begin
+
+	   unencoded_bit <= buffer[index];
+	   
+	   if (remove_zero) begin
+	   
+	       // k3
+	       encode_buffer[(2*index) - 2] <= (unencoded_bit^shift_reg_k3[1])^shift_reg_k3[0];
+           encode_buffer[(2*index + 1) - 2] <= unencoded_bit^shift_reg_k3[0];
+           
+           // k6
+           //encode_buffer[(2*index) - 2] <= ((unencoded_bit^shift_reg_k6[4])^shift_reg_k6[2])^shift_reg_k6[0];
+           //encode_buffer[(2*index + 1) - 2] <= (((unencoded_bit^shift_reg_k6[3])^shift_reg_k6[2])^shift_reg_k6[1])^shift_reg_k6[0];
+	   end
+	   if (index >= 32) begin
+	       encode_ready = 0;
+	   end
+	   
+	   // k3
+	   shift_reg_k3 = shift_reg_k3>>1;
+       shift_reg_k3[1] = unencoded_bit;
+       
+       // k6
+       //shift_reg_k6 = shift_reg_k6>>1;
+       //shift_reg_k6[4] = unencoded_bit;
+	   
+	   index++;
+	   remove_zero <= 1'b1;
 	end
 	
-	// Parse inputs of 4 bytes
-	if (RxD_data_ready) begin
-		counter++;
-		if (counter == 1) begin 
-			buffer[7:0] <= RxD_data;
-		end
-		if (counter == 2) begin 
-			buffer[15:8] <= RxD_data;
-		end
-		if (counter == 3) begin 
-			buffer[23:16] <= RxD_data;
-		end
-		if (counter == 4) begin 
-			buffer[31:24] <= RxD_data;
-		end
+	// Decoding 32 charateres
+	if (decode_start == 1) begin
+
+        if (decoder_data_ready) begin
+            start_var = 0;
+            decode_start = 0;
+        end
+        else begin
+            start_var = 1;
+        end
 	end
+	
+	if (reset) begin
+	   reset <= 0;
+	   shift_reg_k3 <= 0;
+	   index <= 0;
+	   remove_zero <= 1'b0;
+	end
+	
+	// Down resets
+	if (down) begin
+		counter <= 0;
+		reset <= 1;
+	end
+	
+	if (RxD_data_ready) begin
+	   counter++;
+	   if (SW[0] == 0) begin
+            if (counter == 1) begin 
+                buffer[0:7] <= RxD_data;
+            end
+            if (counter == 2) begin 
+                buffer[8:15] <= RxD_data;
+            end
+            if (counter == 3) begin 
+                buffer[16:23] <= RxD_data;
+            end
+            if (counter == 4) begin 
+                buffer[24:31] <= RxD_data;
+                encode_ready <= 1;
+                //counter <= 8;
+            end
+	   end
+	   else begin
+            if (counter == 1) begin 
+                buffer[0:7] <= RxD_data;
+            end
+            if (counter == 2) begin 
+                buffer[8:15] <= RxD_data;
+            end
+            if (counter == 3) begin 
+                buffer[16:23] <= RxD_data;
+            end
+            if (counter == 4) begin 
+                buffer[24:31] <= RxD_data;
+            end
+            if (counter == 5) begin 
+                buffer[32:39] <= RxD_data;
+            end
+            if (counter == 6) begin 
+                buffer[40:47] <= RxD_data;
+            end
+            if (counter == 7) begin 
+                buffer[48:55] <= RxD_data;
+            end
+            if (counter == 8) begin 
+                buffer[56:63] <= RxD_data;
+                decode_start <= 1;
+            end
+        end
+	end
+	
+	send_data = 1'b0;
     
 end
 
