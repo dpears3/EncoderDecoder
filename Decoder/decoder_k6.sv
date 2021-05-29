@@ -26,7 +26,7 @@ class Packet6;
     rand bit random_num;// for if two paths have same path metric a random path will be chosen
 endclass
 
-module decoder_sys_6(encoded_bits, choose_constraint_length, final_output, clk);
+module decoder_k6(encoded_bits, choose_constraint_length, final_output, clk);
 
     // Inputs
     input clk;
@@ -45,12 +45,13 @@ module decoder_sys_6(encoded_bits, choose_constraint_length, final_output, clk);
     // Memory
     
     // Trellis MEMORY
-    reg [5:0] trellis_path_metric [0:29][0:63];  // 2D array 5 bit data, rows = 30, col = 64
-    reg [5:0] trellis_branch_metric [0:29][0:63]; // 2D array 2 bit data, rows = 30, col = 64
+    reg [7:0] trellis_path_metric [0:29][0:63];  // 2D array 5 bit data, rows = 30, col = 64
+    reg [2:0] trellis_branch_metric [0:29][0:63]; // 2D array 2 bit data, rows = 30, col = 64
+    
     
     
     // Trellis optimum Branches
-    logic [3:0] branches[0:63]; //Just a short version of trellis_branch_metric used for quick calculations at each time t
+    logic [1:0] branches[0:63]; //Just a short version of trellis_branch_metric used for quick calculations at each time t
     //logic is the same thing as reg
     // Branch 1 or 0 was the min? Useful for traceback
     reg best_path [0:29][0:31]; // a 1 corresponds to S2 or S3 and a 0 corresponds to S0 or S1
@@ -64,25 +65,17 @@ module decoder_sys_6(encoded_bits, choose_constraint_length, final_output, clk);
                                5'b01111, 5'b11111};
     
     
-    logic [1:0] given_input_next_output [0:63] = {2'b00, 2'b11, 2'b11, 2'b00,
-                                                2'b01, 2'b10, 2'b10, 2'b01,
-                                                2'b11, 2'b00, 2'b00, 2'b11,
-                                                2'b10, 2'b01, 2'b01, 2'b10,
-                                                2'b01, 2'b10, 2'b10, 2'b01,
-                                                2'b00, 2'b11, 2'b11, 2'b00,
-                                                2'b10, 2'b01, 2'b01, 2'b10,
-                                                2'b11, 2'b00, 2'b00, 2'b11,
-                                                2'b10, 2'b01, 2'b01, 2'b10,
-                                                2'b11, 2'b00, 2'b00, 2'b11, 
-                                                2'b01, 2'b10, 2'b10, 2'b01,
-                                                2'b00, 2'b11, 2'b11, 2'b00,
-                                                2'b11, 2'b00, 2'b00, 2'b11,
-                                                2'b10, 2'b01, 2'b01, 2'b10,
-                                                2'b00, 2'b11, 2'b11, 2'b00,
-                                                2'b01, 2'b10, 2'b10, 2'b01};
-                                                                              
-                                                              
-        
+    logic [1:0] given_input_next_output [0:63] = {2'b00, 2'b11, 2'b10, 2'b01, 2'b01, 2'b10, 2'b11, 2'b00, 
+                                                  2'b11, 2'b00, 2'b01, 2'b10, 2'b10, 2'b01, 2'b00, 2'b11,
+                                                  2'b01, 2'b10, 2'b11, 2'b00, 2'b00, 2'b11, 2'b10, 2'b01,
+                                                  2'b10, 2'b01, 2'b00, 2'b11, 2'b11, 2'b00, 2'b01, 2'b10,
+                                                  2'b11, 2'b00, 2'b01, 2'b10, 2'b10, 2'b01, 2'b00, 2'b11,
+                                                  2'b00, 2'b11, 2'b10, 2'b01, 2'b01, 2'b10, 2'b11, 2'b00,
+                                                  2'b10, 2'b01, 2'b00, 2'b11, 2'b11, 2'b00, 2'b01, 2'b10,
+                                                  2'b01, 2'b10, 2'b11, 2'b00, 2'b00, 2'b11, 2'b10, 2'b01};
+
+
+
     // Trellis connecting variable, paired with best_path, Destination: Origin
     reg [5:0] trellis_connection [0:63] = {0, 32, 1, 33, 2, 34, 3, 35, 
                                            4, 36, 5, 37, 6, 38, 7, 39,
@@ -100,18 +93,27 @@ module decoder_sys_6(encoded_bits, choose_constraint_length, final_output, clk);
     // Creating the random variable
     Packet6 pkt = new();// an object to store random variable
     
+    reg cycle_count = 0;
+    reg cycle_finished = 0;
+
+    
     always @(posedge clk) begin
     
         // Initializing, start from zero
         if (symbol_num == 0) begin// time t = 0
             branches[0] <= (encoded_bits ^ given_input_next_output[0]);
             branches[1] <= (encoded_bits ^ given_input_next_output[1]);
+            //branches[0] <= 2'b11;
+            //branches[1] <= 2'b00;
 //            branches[0] <= branches[0][1] + branches[0][0];
 //            branches[1] <= branches[1][1] + branches[1][0];
             trellis_branch_metric[0][0] <= branches[0];
             trellis_branch_metric[0][1] <= branches[1];
             trellis_path_metric[0][0] <= branches[0];
             trellis_path_metric[0][1] <= branches[1];
+            
+//            test_data[0][0] <= branches[0];
+//            test_data[0][1] <= branches[1];
         end
         
         if (symbol_num == 1) begin// time t = 1
@@ -132,21 +134,22 @@ module decoder_sys_6(encoded_bits, choose_constraint_length, final_output, clk);
             trellis_branch_metric[1][1] <= branches[1];
             trellis_branch_metric[1][2] <= branches[2];
             trellis_branch_metric[1][3] <= branches[3];
-            trellis_branch_metric[1][4] <= branches[0];
-            trellis_branch_metric[1][5] <= branches[1];
-            trellis_branch_metric[1][6] <= branches[2];
-            trellis_branch_metric[1][7] <= branches[3];
+            //trellis_branch_metric[1][4] <= branches[0];
+            //trellis_branch_metric[1][5] <= branches[1];
+            //trellis_branch_metric[1][6] <= branches[2];
+            //trellis_branch_metric[1][7] <= branches[3];
             
             // Calculating and Storing paths
             trellis_path_metric[1][0] <= trellis_path_metric[0][0] + branches[0];
             trellis_path_metric[1][1] <= trellis_path_metric[0][0] + branches[1];
             trellis_path_metric[1][2] <= trellis_path_metric[0][1] + branches[2];
             trellis_path_metric[1][3] <= trellis_path_metric[0][1] + branches[3];
-            trellis_path_metric[1][4] <= trellis_path_metric[0][0] + branches[0];
-            trellis_path_metric[1][5] <= trellis_path_metric[0][0] + branches[1];
-            trellis_path_metric[1][6] <= trellis_path_metric[0][1] + branches[2];
-            trellis_path_metric[1][7] <= trellis_path_metric[0][1] + branches[3];
-          
+            
+            
+//            test_data[1][0] <= test_data[0][0] + branches[0];
+//            test_data[1][1] <= test_data[0][0] + branches[1];
+//            test_data[1][2] <= test_data[0][1] + branches[2];
+//            test_data[1][3] <= test_data[0][1] + branches[3];
         end
      if (symbol_num == 2) begin// time t = 2
 
@@ -437,12 +440,44 @@ module decoder_sys_6(encoded_bits, choose_constraint_length, final_output, clk);
         trellis_path_metric[4][62] <= trellis_path_metric[3][15] + branches[30];
         trellis_path_metric[4][63] <= trellis_path_metric[3][15] + branches[31];
 
-     
+        best_path[4][0] = 1'b0;
+        best_path[4][1] = 1'b0;
+        best_path[4][2] = 1'b0;
+        best_path[4][3] = 1'b0;
+        best_path[4][4] = 1'b0;
+        best_path[4][5] = 1'b0;
+        best_path[4][6] = 1'b0;
+        best_path[4][7] = 1'b0;        
+        best_path[4][8] = 1'b0;
+        best_path[4][9] = 1'b0;
+        best_path[4][10] = 1'b0;
+        best_path[4][11] = 1'b0;
+        best_path[4][12] = 1'b0;
+        best_path[4][13] = 1'b0;
+        best_path[4][14] = 1'b0;
+        best_path[4][15] = 1'b0;
+        best_path[4][16] = 1'b0;
+        best_path[4][17] = 1'b0;
+        best_path[4][18] = 1'b0;
+        best_path[4][19] = 1'b0;
+        best_path[4][20] = 1'b0;
+        best_path[4][21] = 1'b0;
+        best_path[4][22] = 1'b0;
+        best_path[4][23] = 1'b0;
+        best_path[4][24] = 1'b0;
+        best_path[4][25] = 1'b0;
+        best_path[4][26] = 1'b0;
+        best_path[4][27] = 1'b0;
+        best_path[4][28] = 1'b0;
+        best_path[4][29] = 1'b0;
+        best_path[4][30] = 1'b0;
+        best_path[4][31] = 1'b0;             
+                                                                     
      end
         // Trellis code
         if (symbol_num >= 5) begin// for time t >= 5
         
-       // Calculate the hamming distance for each branch
+        // Calculate the hamming distance for each branch
         for (i = 0; i < 64; i = i + 1) begin
             // Calculating XOR
             branches[i] <= encoded_bits ^ given_input_next_output[i]; //XORing branch like in previous iterations
@@ -452,7 +487,7 @@ module decoder_sys_6(encoded_bits, choose_constraint_length, final_output, clk);
             
             // Storing into branch metric
             trellis_branch_metric[symbol_num % 30][i] <= branches[i];
-            end
+        end
             
             // The following 8 if statements update Path metric based on previous path plus the current branch
             // i=0,1: Updating Min(Path[0], Path[8]), S0 -> S0 better than S4 -> S0
@@ -529,7 +564,7 @@ module decoder_sys_6(encoded_bits, choose_constraint_length, final_output, clk);
             end
             
                       // i=6,7: S1 -> S3 better than S3 -> S3
-            if (trellis_path_metric[(symbol_num - 1) % 20][6] < trellis_path_metric[(symbol_num - 1) % 20][38])  begin
+            if (trellis_path_metric[(symbol_num - 1) % 30][6] < trellis_path_metric[(symbol_num - 1) % 30][38])  begin
                 trellis_path_metric[symbol_num % 30][12] = trellis_path_metric[(symbol_num - 1) % 30][6] + branches[12];
                 trellis_path_metric[symbol_num % 30][13] = trellis_path_metric[(symbol_num - 1) % 30][6] + branches[13];
             end
@@ -600,7 +635,7 @@ module decoder_sys_6(encoded_bits, choose_constraint_length, final_output, clk);
             end
             
                       // i=6,7: S1 -> S3 better than S3 -> S3
-            if (trellis_path_metric[(symbol_num - 1) % 25][30] < trellis_path_metric[(symbol_num - 1) % 30][44])  begin
+            if (trellis_path_metric[(symbol_num - 1) % 30][12] < trellis_path_metric[(symbol_num - 1) % 30][44])  begin
                 trellis_path_metric[symbol_num % 30][24] = trellis_path_metric[(symbol_num - 1) % 30][12] + branches[24];
                 trellis_path_metric[symbol_num % 30][25] = trellis_path_metric[(symbol_num - 1) % 30][12] + branches[25];
             end
@@ -625,7 +660,7 @@ module decoder_sys_6(encoded_bits, choose_constraint_length, final_output, clk);
             end
             
                       // i=6,7: S1 -> S3 better than S3 -> S3
-            if (trellis_path_metric[(symbol_num - 1) % 20][14] < trellis_path_metric[(symbol_num - 1) % 20][46])  begin
+            if (trellis_path_metric[(symbol_num - 1) % 30][14] < trellis_path_metric[(symbol_num - 1) % 30][46])  begin
                 trellis_path_metric[symbol_num % 30][28] = trellis_path_metric[(symbol_num - 1) % 30][14] + branches[28];
                 trellis_path_metric[symbol_num % 30][29] = trellis_path_metric[(symbol_num - 1) % 30][14] + branches[29];
             end
@@ -1142,6 +1177,8 @@ module decoder_sys_6(encoded_bits, choose_constraint_length, final_output, clk);
   // Picking an output
         if (symbol_num >= 29) begin
             
+            //if (cycle_count == 1'b1) begin
+            
             // Traceback, which is the best ending path metric?
             trace_index = (symbol_num) % 30;
             min_trellis = 0;
@@ -1183,9 +1220,17 @@ module decoder_sys_6(encoded_bits, choose_constraint_length, final_output, clk);
             final_output = states[(min_trellis / 2)][1];//Stores the leading bit of states[] in final_output
             //It is needed to use two parameters for the 1D array states[] beacause only the leading bit needs to be stored
             
+            //end
+            
         end//matches with symbol_num >= 19
         
-        symbol_num++;
+        cycle_count++;
+        
+        if (cycle_count == 0 && cycle_finished == 1'b1) begin
+            symbol_num++;
+        end
+        
+        cycle_finished = 1'b1;
         
     end //matches with always
     
